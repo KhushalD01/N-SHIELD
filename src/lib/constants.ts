@@ -4,6 +4,8 @@ import {
   EyeOff,
   Shield,
   BrainCircuit,
+  Sparkles,
+  Radio,
   type LucideIcon,
 } from "lucide-react";
 
@@ -46,6 +48,18 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Deploy Forces",
     icon: Shield,
     description: "Resource deployment matrix",
+  },
+  {
+    id: "emergency-circle",
+    label: "Emergency Circle",
+    icon: Radio,
+    description: "One-tap live location sharing",
+  },
+  {
+    id: "ai-assistant",
+    label: "AI Safety Assistant",
+    icon: Sparkles,
+    description: "Emergency & services intelligence",
   },
   {
     id: "event-predictor",

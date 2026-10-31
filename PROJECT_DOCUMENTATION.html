@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>USAI - Nagpur Command Center Complete Documentation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    
+    :root {
+      --bg-main: #0B0F17;
+      --card-bg: #131B2A;
+      --accent-cyan: #06B6D4;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-red: #EF4444;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --border-color: #1E293B;
+    }
+
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      .card, table, pre {
+        border: 1px solid #ccc !important;
+        background: #fafafa !important;
+        color: #000000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      h1, h2, h3 {
+        color: #000000 !important;
+      }
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      margin: 0;
+      padding: 40px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--accent-cyan);
+      color: #000;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      border-bottom: 2px solid var(--accent-cyan);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      margin-top: 40px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: #38BDF8;
+      margin-top: 24px;
+    }
+
+    p, li {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    strong {
+      color: var(--text-main);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.92rem;
+    }
+
+    th {
+      background-color: #1E293B;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #0F172A;
+      color: #38BDF8;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+    }
+
+    pre {
+      padding: 16px;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-cyan { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
+    .badge-emerald { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+  </style>
+</head>
+<body>
+  <button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF / Print</button>
+  <div class="container">
+    <h1>USAI - Nagpur City Command Center</h1>
+    <p><span class="badge badge-cyan">AI-Powered Urban Safety Intelligence</span> <span class="badge badge-emerald">Nagpur City Digital Twin</span></p>
+
+    <h2>1. Executive Summary & Vision</h2>
+    <p>USAI is an advanced Urban Safety Intelligence & 3D Command Center platform built for Nagpur City. It merges spatial risk modeling, CCTV blind spot detection, AI police force deployment, public event impact forecasting, and Explainable AI (XAI) into an interactive digital twin.</p>
+
+    <h2>2. System Architecture & Tech Stack</h2>
+    <ul>
+      <li><strong>Next.js 16</strong> (App Router) + <strong>React 19</strong> + <strong>TypeScript</strong></li>
+      <li><strong>Tailwind CSS v4</strong> (Futuristic Dark UI Theme)</li>
+      <li><strong>Google Maps JavaScript API</strong> + <strong>Mapbox GL 3D Digital Twin</strong></li>
+      <li><strong>Deck.gl</strong> GPU Heatmaps & Sensor Overlay Layers</li>
+      <li><strong>Web Audio API</strong> Synthesized Alarm Engine</li>
+    </ul>
+
+    <h2>3. Nagpur City Sectors & Infrastructure</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Sector Code</th>
+          <th>Name</th>
+          <th>Coordinates</th>
+          <th>Radius</th>
+          <th>Officer in Charge</th>
+          <th>Population</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Z-SIT</td><td>Sitabuldi</td><td>21.1458° N, 79.0882° E</td><td>2.5 km</td><td>Insp. Rajesh Sharma</td><td>120,000</td></tr>
+        <tr><td>Z-DHA</td><td>Dharampeth</td><td>21.1412° N, 79.0610° E</td><td>3.0 km</td><td>Insp. Anita Deshmukh</td><td>180,000</td></tr>
+        <tr><td>Z-SAD</td><td>Sadar</td><td>21.1610° N, 79.0815° E</td><td>2.8 km</td><td>Insp. Amit Varma</td><td>140,000</td></tr>
+        <tr><td>Z-ITW</td><td>Itwari</td><td>21.1520° N, 79.1120° E</td><td>2.2 km</td><td>Insp. Vijay Patil</td><td>210,000</td></tr>
+        <tr><td>Z-SAK</td><td>Sakkardara</td><td>21.1210° N, 79.1050° E</td><td>3.2 km</td><td>Insp. Sunita Kulkarni</td><td>195,000</td></tr>
+        <tr><td>Z-AUT</td><td>Automotive Sq</td><td>21.1920° N, 79.0910° E</td><td>4.0 km</td><td>Insp. Manoj Shinde</td><td>110,000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>4. Algorithmic Risk & Deployment Engines</h2>
+    <p>Risk Score Calculation Formula:</p>
+    <pre>RiskScore = min(100, Round((IncidentLoad * 0.38 + TimeFactor * 0.27 + CCTVDeficit * 0.22 + LightingDeficit * 0.13) * 100))</pre>
+    <p>Required Patrol Allocation Formula:</p>
+    <pre>RequiredPatrols = max(2, Round((Population / 50000) + (RiskScore / 15) + (CrimeVelocity / 20)))</pre>
+
+    <h2>5. REST API Endpoints</h2>
+    <ul>
+      <li><code>GET /api/incidents</code> - Query incidents filtered by zone, severity, or type.</li>
+      <li><code>GET /api/cctv</code> - CCTV surveillance network status and coverage analysis.</li>
+      <li><code>GET /api/zones</code> - Complete sector metadata and coordinates.</li>
+      <li><code>GET /api/news</code> - Live real-time Nagpur crime and urban safety news feed.</li>
+    </ul>
+
+    <h2>6. Setup & Execution</h2>
+    <pre>
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
+
+# Build production bundle
+npm run build
+    </pre>
+  </div>
+</body>
+</html>

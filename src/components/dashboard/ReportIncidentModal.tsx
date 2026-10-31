@@ -26,12 +26,21 @@ export function ReportIncidentModal({
 }: ReportIncidentModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<NewsCategory>("Other");
+  const [category, setCategory] = useState<NewsCategory>("Other Crime");
   const [selectedLocation, setSelectedLocation] = useState(POPULAR_NAGPUR_LOCATIONS[0]);
   const [customLocation, setCustomLocation] = useState("");
   const [submittedName, setSubmittedName] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -44,6 +53,7 @@ export function ReportIncidentModal({
           name: "My GPS Location",
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
+          locality: "Nagpur",
         });
         setIsLocating(false);
       },
@@ -129,14 +139,18 @@ export function ReportIncidentModal({
                 className="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 font-semibold text-slate-800 dark:text-slate-200 outline-none"
               >
                 <option value="Theft">🔴 Theft / Stolen Property</option>
-                <option value="Robbery">🔴 Robbery / Loot</option>
-                <option value="Assault">🔴 Assault / Physical Altercation</option>
-                <option value="Burglary">🔴 Burglary / House Break-in</option>
                 <option value="Vehicle Theft">🔴 Vehicle Theft (Car / Bike)</option>
-                <option value="Accident">🚨 Traffic Accident / Collision</option>
-                <option value="Fire">🔥 Fire Outbreak</option>
+                <option value="Robbery">🔴 Robbery / Loot</option>
+                <option value="Burglary">🔴 Burglary / House Break-in</option>
+                <option value="Assault">🔴 Assault / Physical Altercation</option>
+                <option value="Murder">🚨 Murder / Homicide</option>
+                <option value="Kidnapping">⚠️ Kidnapping / Abduction</option>
+                <option value="Crimes Against Women">🛡️ Crimes Against Women</option>
+                <option value="Cybercrime">💻 Cybercrime / Cyber Fraud</option>
+                <option value="Fraud">💳 Fraud / Scam</option>
+                <option value="Drugs and Smuggling">🚫 Drugs & Narcotics Smuggling</option>
                 <option value="Missing Person">👤 Missing Person</option>
-                <option value="Other">ℹ️ Civic / Other Safety Hazard</option>
+                <option value="Other Crime">🚨 Other Crime</option>
               </select>
             </div>
 

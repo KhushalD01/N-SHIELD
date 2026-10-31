@@ -66,6 +66,15 @@ export function ExplainableAIPanel({ analysis, open, onClose }: ExplainableAIPan
     setBarsReady(false);
   }, [open, analysis?.zoneId]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
+
   return (
     <AnimatePresence>
       {open && analysis && (
@@ -73,7 +82,7 @@ export function ExplainableAIPanel({ analysis, open, onClose }: ExplainableAIPan
           <motion.button
             type="button"
             aria-label="Close explainable AI panel"
-            className="absolute inset-0 z-30 bg-slate-900/20 backdrop-blur-[2px]"
+            className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -81,7 +90,7 @@ export function ExplainableAIPanel({ analysis, open, onClose }: ExplainableAIPan
           />
 
           <motion.aside
-            className="absolute right-0 top-0 z-40 flex h-full w-full max-w-md flex-col border-l border-slate-200 bg-white/95 shadow-2xl backdrop-blur-2xl"
+            className="fixed right-0 top-0 bottom-0 z-50 flex h-full w-full max-w-md flex-col border-l border-slate-200 bg-white/95 shadow-2xl backdrop-blur-2xl"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

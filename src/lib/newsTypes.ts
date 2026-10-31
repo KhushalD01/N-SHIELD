@@ -2,14 +2,33 @@ export type NewsCategory =
   | "All Updates"
   | "All Crimes"
   | "Theft"
-  | "Robbery"
-  | "Assault"
-  | "Burglary"
   | "Vehicle Theft"
-  | "Accident"
-  | "Fire"
+  | "Robbery"
+  | "Burglary"
+  | "Assault"
+  | "Murder"
+  | "Kidnapping"
+  | "Crimes Against Women"
+  | "Cybercrime"
+  | "Fraud"
+  | "Drugs and Smuggling"
   | "Missing Person"
-  | "Other";
+  | "Other Crime";
+
+export type SafetyNewsCategory =
+  | "Theft"
+  | "Vehicle Theft"
+  | "Robbery"
+  | "Burglary"
+  | "Assault"
+  | "Murder"
+  | "Kidnapping"
+  | "Crimes Against Women"
+  | "Cybercrime"
+  | "Fraud"
+  | "Drugs and Smuggling"
+  | "Missing Person"
+  | "Other Crime";
 
 export type ReportSourceType = "news" | "citizen" | "official";
 
@@ -20,21 +39,52 @@ export interface RecognizedLocation {
   isSpecificZone: boolean;
 }
 
+export type SafetyNewsArticle = {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  source: string;
+  sourceUrl: string;
+  imageUrl: string | null;
+  publishedAt: string;
+  category: SafetyNewsCategory;
+  location: string | null;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+export type AreaRisk = {
+  area: string;
+  latitude: number;
+  longitude: number;
+  incidentCount: number;
+  recentIncidentCount: number;
+  riskScore: number;
+  riskLevel: "Low" | "Medium" | "High";
+  categories: Record<string, number>;
+  latestIncidentAt: string;
+};
+
 export interface RealNewsArticle {
   id: string;
   title: string;
-  description: string | null;
-  content?: string | null;
-  link: string; // Real article URL
+  description: string;
+  content: string;
+  link: string;
+  source: string;
+  sourceName: string;
+  sourceUrl: string;
   imageUrl: string | null;
-  pubDate: string; // ISO string
-  relativeTime: string; // "2 hours ago"
-  sourceName: string; // e.g. "Times of India", "The Hitavada", "Lokmat Times"
-  sourceUrl?: string | null;
+  pubDate: string;
+  publishedAt: string;
+  relativeTime: string;
   category: NewsCategory;
   isCrime: boolean;
   sourceType: ReportSourceType;
-  location: RecognizedLocation;
+  location: RecognizedLocation | null;
+  latitude: number | null;
+  longitude: number | null;
   verificationStatus: "Reported by News Source" | "Citizen Report (Unverified)" | "Official Police / Civic Source";
   severity?: "low" | "medium" | "high" | "critical";
 }
@@ -55,9 +105,10 @@ export interface CitizenSubmittedReport {
 export interface NewsApiResponse {
   articles: RealNewsArticle[];
   allArticles?: RealNewsArticle[]; // Unfiltered full feed for sidebar
+  areaRisks?: AreaRisk[];
   totalResults: number;
   lastUpdated: string;
-  source: "newsdata.io" | "fallback_offline";
+  source: "newsapi.org" | "fallback_offline";
   categoryCounts?: Record<NewsCategory, number>;
   error?: string | null;
 }

@@ -2,6 +2,7 @@
 
 import React from "react";
 import {
+  AlertTriangle,
   Building2,
   CheckCircle2,
   Clock,
@@ -74,6 +75,7 @@ interface ServiceInfoCardProps {
   userLocation: UserLocation;
   formattedDistance: string;
   onClose: () => void;
+  topOffset?: number;
 }
 
 export function ServiceInfoCard({
@@ -81,58 +83,88 @@ export function ServiceInfoCard({
   userLocation,
   formattedDistance,
   onClose,
+  topOffset = 180,
 }: ServiceInfoCardProps) {
   const meta = CATEGORY_META[service.category] || CATEGORY_META.police;
   const directionsUrl = getGoogleMapsDirectionsUrl(userLocation, service);
   const dialerUrl = getPhoneDialerUrl(service.phone);
 
   return (
-    <div className="absolute inset-x-3 bottom-3 sm:bottom-auto sm:inset-x-auto sm:left-6 sm:top-28 z-30 w-auto sm:w-full sm:max-w-md rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-2xl space-y-3 sm:space-y-4 animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-left-4 duration-200 max-h-[75vh] sm:max-h-[calc(100vh-140px)] overflow-y-auto">
-      
-      {/* Category Pill & Close Button */}
-      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-        <div className="flex items-center gap-2">
+    <div
+      className="w-full rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-[0_16px_40px_-10px_rgba(0,0,0,0.25)] flex flex-col pointer-events-auto"
+    >
+      {/* Category Pill & Close Button (Sticky Header) */}
+      <div className="sticky top-0 z-20 px-3.5 pt-3 pb-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 rounded-t-2xl">
+        <div className="flex items-center gap-1.5">
           <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide border ${meta.bgBadge} ${meta.textBadge} ${meta.borderBadge}`}
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wide border ${meta.bgBadge} ${meta.textBadge} ${meta.borderBadge}`}
           >
             <span className="text-sm">{meta.icon}</span>
             <span>{meta.label}</span>
           </span>
-          {service.verified && (
+          {service.hospitalDetails?.verificationStatus === "needs_review" ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-3.5 w-3.5" /> Needs Review
+            </span>
+          ) : service.hospitalDetails?.verificationStatus === "unverified" || !service.verified ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-500 dark:text-rose-400">
+              Unverified Location
+            </span>
+          ) : (
             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-              <ShieldCheck className="h-3.5 w-3.5" /> Verified
+              <ShieldCheck className="h-3.5 w-3.5" /> Verified Premise
             </span>
           )}
         </div>
 
         <button
           onClick={onClose}
-          className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition"
+          className="rounded-full p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer shrink-0"
           aria-label="Close"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      {/* Service Name & Distance */}
-      <div>
-        <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-50 leading-tight">
-          {service.name}
-        </h3>
-        <div className="mt-2 flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800 px-3 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
-            <MapPin className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-            📍 {formattedDistance}
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-            Open / Available
-          </span>
+      {/* Spacious Body Content (Grows naturally without forced map-height clamp) */}
+      <div className="p-3.5 space-y-2.5 overflow-y-auto max-h-[calc(100vh-140px)] overscroll-contain flex-1">
+        {/* Service Name & Distance */}
+        <div>
+          <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-50 leading-tight">
+            {service.name}
+          </h3>
+          <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+            <span className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800 px-2.5 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+              <MapPin className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              📍 {formattedDistance}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              {service.is24x7 ? "24/7 Verified" : "Open / Available"}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 text-[11px] font-mono text-slate-600 dark:text-slate-300">
+              🧭 {service.lat.toFixed(5)}, {service.lng.toFixed(5)}
+            </span>
+            {service.hospitalDetails?.beds && (
+              <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                🛏️ {service.hospitalDetails.beds} Beds
+              </span>
+            )}
+            {service.hospitalDetails?.ambulanceAvailable && (
+              <span className="inline-flex items-center gap-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                🚑 Ambulance Unit
+              </span>
+            )}
+            {service.hospitalDetails?.bloodBankAvailable && (
+              <span className="inline-flex items-center gap-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 px-2.5 py-1 text-xs font-semibold text-rose-700 dark:text-rose-300">
+                🩸 Blood Bank
+              </span>
+            )}
+          </div>
         </div>
-      </div>
 
       {/* Route Distance Flow Preview */}
-      <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 p-3.5">
+      <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 p-2.5">
         <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">
           <span>Route from current location</span>
           <span className="text-indigo-600 dark:text-indigo-400">{formattedDistance}</span>
@@ -176,6 +208,39 @@ export function ServiceInfoCard({
           <span className="font-medium">Timing: {service.timing}</span>
         </div>
 
+        {service.specialties && (
+          <div className="rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 p-2.5 border border-indigo-100 dark:border-indigo-900/60 text-[11px] text-indigo-900 dark:text-indigo-200">
+            <span className="font-bold">Specialties:</span> {service.specialties}
+          </div>
+        )}
+
+        {service.email && (
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+            <span className="text-slate-400">✉️</span>
+            <a
+              href={`mailto:${service.email}`}
+              className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline truncate"
+            >
+              {service.email}
+            </a>
+          </div>
+        )}
+
+        {service.website && (
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+            <span className="text-slate-400">🌐</span>
+            <a
+              href={service.website.startsWith("http") ? service.website : `https://${service.website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline truncate flex items-center gap-1"
+            >
+              <span>Official Website</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        )}
+
         {service.notes && (
           <p className="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200/50 dark:border-slate-800">
             ℹ️ {service.notes}
@@ -208,6 +273,7 @@ export function ServiceInfoCard({
           <Compass className="h-4 w-4" />
           <span>🧭 Directions</span>
         </a>
+      </div>
       </div>
     </div>
   );

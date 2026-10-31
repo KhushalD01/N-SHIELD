@@ -160,3 +160,61 @@ export interface BlindSpotsResponse {
     };
   };
 }
+
+export interface CrimePolygonRegion {
+  id: string;
+  zoneId: string;
+  name: string;
+  code: string;
+  wardName: string;
+  boundaryCoordinates: [number, number][]; // Array of [lat, lng] forming a closed polygon
+  center: { lat: number; lng: number };
+  areaKm2: number;
+  populationEstimate: number;
+  officerInCharge: string;
+  contactNumber: string;
+  keyVulnerabilities: string[];
+}
+
+export interface PolygonRiskAnalytics {
+  polygonId: string;
+  zoneId: string;
+  name: string;
+  code: string;
+  wardName: string;
+  boundaryCoordinates: [number, number][];
+  center: { lat: number; lng: number };
+  riskScore: number;
+  riskLevel: "HIGH" | "MEDIUM" | "LOW";
+  status:
+    | "CRITICAL PRIORITY"
+    | "EMERGING HOTSPOT"
+    | "HIGH PRIORITY"
+    | "MODERATE"
+    | "SAFE & STABLE"
+    | "INSUFFICIENT DATA";
+  colorHex: string;
+  fillOpacity: number;
+  strokeColorHex: string;
+  strokeWeight: number;
+  recentIncidentsCount: number;
+  historicalIncidentsCount: number;
+  categoryBreakdown: Record<string, number>;
+  crimeTrendPercentage: number;
+  cctvCount: number;
+  cctvOperationalCount: number;
+  cctvCoveragePercent: number;
+  cctvCoverageStatus: "Good" | "Moderate" | "Poor";
+  lightingIndex: number;
+  nightRiskLevel: "High" | "Medium" | "Low";
+  isEmergingHotspot: boolean;
+  isCriticalPriority: boolean;
+  highRiskReasons: string[];
+  aiRecommendation: string;
+  dataConfidence: "High" | "Moderate" | "Low" | "Insufficient";
+  dataLimitations?: string;
+  officerInCharge: string;
+  contactNumber: string;
+  populationEstimate: number;
+  areaKm2: number;
+}

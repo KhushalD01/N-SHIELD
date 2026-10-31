@@ -98,6 +98,15 @@ export function NotificationDropdown({
   const [notifications, setNotifications] = useState<SafetyNotification[]>(DEFAULT_NOTIFICATIONS);
   const [filter, setFilter] = useState<"all" | "urgent" | "patrol" | "cctv">("all");
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;

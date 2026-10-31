@@ -86,7 +86,7 @@ export default function ZoneAnalyticsPage({ params }: ZonePageProps) {
             </Link>
 
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-bold text-slate-900 sm:text-xl">
                   {zoneDetail.name} Sector Analytics
                 </h1>
@@ -129,7 +129,7 @@ export default function ZoneAnalyticsPage({ params }: ZonePageProps) {
         {/* --------------------------------------------------------------------- */}
         {/* SUMMARY METRICS ROW                                                   */}
         {/* --------------------------------------------------------------------- */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs">
             <div className="flex items-center justify-between text-slate-500">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">

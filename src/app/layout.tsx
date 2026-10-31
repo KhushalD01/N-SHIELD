@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,11 +12,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Aura — Nagpur Citizen Safety Map",
-  description:
-    "A human-crafted, hyper-modern citizen safety companion for Nagpur with live safe routes, street lighting index, and 24/7 verified safe havens.",
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+  ],
 };
+
+export const metadata: Metadata = {
+  title: "N-SHIELD — AI-Driven Urban Safety Intelligence Model",
+  description:
+    "AI-powered urban safety intelligence model for Nagpur, Maharashtra. Real-time crime-risk visualization, predictive policing, verified emergency services, incident news, and 24/7 citizen safety companion.",
+};
+
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
@@ -26,10 +39,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
-      <body className="h-full antialiased bg-white dark:bg-zinc-950 font-sans selection:bg-emerald-500 selection:text-white">
-        {children}
+      <body
+        suppressHydrationWarning
+        className="h-full antialiased bg-white dark:bg-zinc-950 font-sans selection:bg-emerald-500 selection:text-white"
+      >
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

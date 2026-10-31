@@ -21,8 +21,14 @@ import { SafetyTipsSection } from "./SafetyTipsSection";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 import { EmergencySOSModal } from "./EmergencySOSModal";
+import { EmergencyDirectoryModal } from "./EmergencyDirectoryModal";
 import { SafeRouteModal } from "./SafeRouteModal";
 import { GlobalSearchBar } from "./GlobalSearchBar";
+import { SafetyAssistant } from "@/components/assistant/SafetyAssistant";
+import { AssistantLauncher } from "@/components/assistant/AssistantLauncher";
+import { EmergencyCircleView } from "@/components/emergency-circle/EmergencyCircleView";
+import type { RouteOption, ServicePlace } from "@/lib/validation/assistantSchemas";
+import type { DisruptionIncident } from "@/lib/routing/types";
 import { NAV_ITEMS } from "@/lib/constants";
 import {
   detectCriticalBlindSpots,
@@ -49,6 +55,7 @@ import {
   type UserLocation,
 } from "@/lib/geoUtils";
 import type { RealNewsArticle } from "@/lib/newsTypes";
+import { NAGPUR_CRIME_POLYGONS } from "@/lib/nagpurPolygons";
 
 const GoogleNagpurMap = dynamic(() => import("./GoogleNagpurMap"), {
   ssr: false,
@@ -77,6 +84,8 @@ export function CommandCenterLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [safeRouteModalOpen, setSafeRouteModalOpen] = useState(false);
   const [emergencySOSModalOpen, setEmergencySOSModalOpen] = useState(false);
+  const [directoryModalOpen, setDirectoryModalOpen] = useState(false);
+  const [assistantOpen, setAssistantOpen] = useState(false);
 
   // User reference location
   const [userLocation, setUserLocation] = useState<UserLocation>(DEFAULT_NAGPUR_USER_LOCATION);
@@ -88,6 +97,13 @@ export function CommandCenterLayout() {
   // Active selected real news article for map preview
   const [selectedNewsArticle, setSelectedNewsArticle] = useState<RealNewsArticle | null>(null);
   const [isDetectingGps, setIsDetectingGps] = useState(false);
+  const [isPickingLocationOnMap, setIsPickingLocationOnMap] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  // Dynamic Safe Route Reconstruction State
+  const [activeRoute, setActiveRoute] = useState<RouteOption | null>(null);
+  const [alternativeRoutes, setAlternativeRoutes] = useState<RouteOption[]>([]);
+  const [routeDisruptions, setRouteDisruptions] = useState<DisruptionIncident[]>([]);
 
   const { incidents, zones, cameras, loading, error } = useIntelligenceData();
   const {
@@ -127,13 +143,22 @@ export function CommandCenterLayout() {
 
   const explainableAnalysis = useMemo(() => {
     if (!selectedZoneId || zones.length === 0) return null;
-    const zone = zones.find((z) => z.id === selectedZoneId);
+    let targetZoneId = selectedZoneId;
+    if (selectedZoneId.startsWith("poly-")) {
+      const poly = NAGPUR_CRIME_POLYGONS.find((p) => p.id === selectedZoneId);
+      if (poly) targetZoneId = poly.zoneId;
+    }
+    const zone = zones.find((z) => z.id === targetZoneId);
     if (!zone) return null;
     return buildExplainableAnalysis(zone, incidents, cameras, detectionHour);
   }, [selectedZoneId, zones, incidents, cameras, detectionHour]);
 
-  const handleZoneSelect = useCallback((zoneId: string) => {
+  const handleZoneSelect = useCallback((zoneId: string | null) => {
     setSelectedZoneId(zoneId);
+    if (!zoneId) {
+      setExplainableOpen(false);
+      return;
+    }
     setSelectedService(null);
     setSelectedNewsArticle(null);
     setExplainableOpen(true);
@@ -160,24 +185,38 @@ export function CommandCenterLayout() {
 
   const handleDetectGps = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      setLocationError("Geolocation is not supported by your browser.");
       return;
     }
     setIsDetectingGps(true);
+    setLocationError(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserLocation({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
           label: "My GPS Location",
+          isUserSet: true,
+          source: "gps",
         });
         setIsDetectingGps(false);
+        setLocationError(null);
       },
       (err) => {
         console.warn("GPS error:", err);
         setIsDetectingGps(false);
+        if (err.code === 1) {
+          setLocationError("Location permission was denied. Please select an area from the dropdown or click 'Pick on Map'.");
+        } else if (err.code === 2) {
+          setLocationError("Location unavailable. Please select an area from the dropdown or click 'Pick on Map'.");
+        } else if (err.code === 3) {
+          setLocationError("GPS location request timed out. Please try again or select an area.");
+        } else {
+          setLocationError("Could not determine your location. Please choose an area from the dropdown.");
+        }
       },
-      { timeout: 8000 }
+      { timeout: 8000, enableHighAccuracy: true }
     );
   };
 
@@ -203,26 +242,67 @@ export function CommandCenterLayout() {
     }
   };
 
-  const showDeploymentSimulator = activeNav === "police-deployment";
+  const handleNavigate = (id: string) => {
+    if (id === "ai-assistant") {
+      setAssistantOpen(true);
+      return;
+    }
+    setActiveNav(id);
+  };
+
+  const handleSelectAssistantPlace = useCallback((place: ServicePlace) => {
+    const matchingService = NAGPUR_ESSENTIAL_SERVICES.find((s) => s.id === place.id);
+    if (matchingService) {
+      setSelectedService(matchingService);
+    } else {
+      setSelectedService({
+        id: place.id,
+        name: place.name,
+        category:
+          place.type === "police_station"
+            ? "police"
+            : place.type === "pharmacy"
+            ? "pharmacy"
+            : "hospital",
+        lat: place.location.lat,
+        lng: place.location.lng,
+        phone: place.phone || null,
+        address: place.address,
+        timing: place.openingHours || "Standard Hours",
+        is24x7: !!place.is24x7,
+        verified: true,
+      });
+    }
+    setSelectedNewsArticle(null);
+    setActiveNav("live-map");
+    const mapSection = document.getElementById("safety-map-section");
+    if (mapSection) {
+      mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  const showDeploymentSimulator = activeNav === "police-deployment" || activeNav === "deploy-forces";
+  const showEmergencyCircle = activeNav === "emergency-circle";
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-100 dark:bg-slate-950">
+    <div className="flex h-screen h-[100dvh] max-h-[100dvh] w-full max-w-full overflow-hidden bg-slate-100 dark:bg-slate-950">
       
-      {/* Desktop Sidebar (Hidden on mobile) */}
-      <div className="hidden md:flex h-full">
+      {/* Desktop Sidebar (Hidden on mobile & tablet) */}
+      <div className="hidden lg:flex h-full">
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggle={() => setSidebarCollapsed((c) => !c)}
           activeId={activeNav}
-          onNavigate={setActiveNav}
+          onNavigate={handleNavigate}
         />
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0 w-full max-w-full">
         <Header
           onOpenMobileNav={() => setMobileNavOpen(true)}
           onOpenEmergencySOS={() => setEmergencySOSModalOpen(true)}
+          onOpenAssistant={() => setAssistantOpen(true)}
           onSelectZone={handleZoneSelect}
           userLocation={userLocation}
           zones={zones}
@@ -240,10 +320,10 @@ export function CommandCenterLayout() {
           }}
         />
 
-        <main className="relative flex flex-1 flex-col gap-4 overflow-y-auto p-3 sm:p-5 pb-24 md:pb-6">
+        <main className="relative flex flex-1 flex-col gap-4 overflow-y-auto p-3 sm:p-5 pb-24 lg:pb-6 min-w-0 w-full">
           
-          {/* Mobile Hero & Area Safety Search Bar */}
-          <div className="block md:hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-900 p-4 text-white shadow-xl space-y-3">
+          {/* Mobile & Tablet Hero & Area Safety Search Bar */}
+          <div className="block lg:hidden relative z-10 rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-900 p-4 text-white shadow-xl space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider">
@@ -301,15 +381,17 @@ export function CommandCenterLayout() {
           </div>
 
           {/* Quick "Need Help?" Bar */}
-          {!showDeploymentSimulator && (
+          {!showDeploymentSimulator && !showEmergencyCircle && (
             <QuickHelpBar
               onQuickCategoryClick={handleQuickCategoryClick}
               onCallEmergency112={() => setEmergencySOSModalOpen(true)}
+              onOpenDirectory={() => setDirectoryModalOpen(true)}
+              onOpenSafeRoute={() => setSafeRouteModalOpen(true)}
             />
           )}
 
           {/* KPI Cards Row */}
-          {!showDeploymentSimulator && activeNav !== "live-map" && (
+          {!showDeploymentSimulator && !showEmergencyCircle && activeNav !== "live-map" && (
             <KpiCardsRow
               activePatrols={policePatrolUnits.length}
               blindSpotsCount={allBlindSpots.length}
@@ -330,6 +412,10 @@ export function CommandCenterLayout() {
                 loading={loading}
               />
             </div>
+          ) : showEmergencyCircle ? (
+            <div className="flex-1 overflow-y-auto min-h-[600px] rounded-3xl border border-slate-200/80 bg-white p-4 sm:p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <EmergencyCircleView />
+            </div>
           ) : (
             <div className="flex flex-col flex-1 gap-4">
               <div className="flex flex-col lg:flex-row flex-1 min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] gap-4">
@@ -337,29 +423,10 @@ export function CommandCenterLayout() {
                 {/* Left Side (Map): Responsive Height & Nearly Full Width on Mobile */}
                 <div
                   id="safety-map-section"
-                  className="relative flex w-full lg:w-[60%] flex-col min-w-0"
+                  className="relative flex w-full lg:w-[60%] flex-col min-w-0 z-20"
                 >
-                  <div className="relative flex-1 overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] h-[440px] sm:h-[500px] lg:h-full min-h-[420px] sm:min-h-[500px]">
+                  <div className="relative flex-1 rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] h-[440px] sm:h-[500px] lg:h-full min-h-[420px] sm:min-h-[500px]">
                     
-                    {/* Top Right Quick Controls */}
-                    <div className="absolute right-3 sm:right-4 top-20 sm:top-24 z-20 flex items-center gap-2">
-                      <NightSafetyToggle
-                        enabled={nightSafetyMode}
-                        onChange={setNightSafetyMode}
-                      />
-                      {(activeNav === "live-map" || activeNav === "event-predictor") &&
-                        !nightSafetyMode && (
-                          <button
-                            type="button"
-                            onClick={() => setEventModalOpen(true)}
-                            className="hidden sm:flex items-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-indigo-700"
-                          >
-                            <CalendarPlus className="h-4 w-4" />
-                            Simulate Event
-                          </button>
-                        )}
-                    </div>
-
                     {/* Main Google Maps Component */}
                     <GoogleNagpurMap
                       className="h-full w-full"
@@ -375,6 +442,9 @@ export function CommandCenterLayout() {
                       loading={loading}
                       error={error}
                       nightSafetyMode={nightSafetyMode}
+                      onToggleNightSafety={setNightSafetyMode}
+                      onSimulateEvent={() => setEventModalOpen(true)}
+                      showSimulateEvent={activeNav === "live-map" || activeNav === "event-predictor"}
                       simulatedHour={simulatedHour}
                       onZoneSelect={handleZoneSelect}
                       selectedZoneId={selectedZoneId}
@@ -383,6 +453,12 @@ export function CommandCenterLayout() {
                       selectedService={selectedService}
                       onSelectService={setSelectedService}
                       activeServiceCategoryFilter={activeServiceCategoryFilter}
+                      activeRoute={activeRoute}
+                      alternativeRoutes={alternativeRoutes}
+                      routeDisruptions={routeDisruptions}
+                      onSelectRoute={setActiveRoute}
+                      isPickingLocationOnMap={isPickingLocationOnMap}
+                      onFinishPickingLocationOnMap={() => setIsPickingLocationOnMap(false)}
                     />
                   </div>
                 </div>
@@ -453,6 +529,16 @@ export function CommandCenterLayout() {
                 onUpdateLocation={setUserLocation}
                 onDetectLocation={handleDetectGps}
                 isDetectingLocation={isDetectingGps}
+                locationError={locationError}
+                onClearLocationError={() => setLocationError(null)}
+                onStartPickLocationOnMap={() => {
+                  setIsPickingLocationOnMap((prev) => !prev);
+                  const mapSection = document.getElementById("safety-map-section");
+                  if (mapSection) {
+                    mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+                isPickingLocationOnMap={isPickingLocationOnMap}
               />
 
               {/* Real Incident & News Intelligence Section */}
@@ -483,7 +569,7 @@ export function CommandCenterLayout() {
       {/* Mobile Bottom Navigation (Visible only on mobile) */}
       <MobileBottomNav
         activeNav={activeNav}
-        onNavigate={setActiveNav}
+        onNavigate={handleNavigate}
         onOpenReportModal={() => setReportModalOpen(true)}
         onOpenSafeRouteModal={() => setSafeRouteModalOpen(true)}
         onOpenEmergencySOS={() => setEmergencySOSModalOpen(true)}
@@ -494,7 +580,7 @@ export function CommandCenterLayout() {
         isOpen={mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
         activeId={activeNav}
-        onNavigate={setActiveNav}
+        onNavigate={handleNavigate}
         nightSafetyMode={nightSafetyMode}
         onToggleNightSafety={setNightSafetyMode}
         onOpenReportModal={() => setReportModalOpen(true)}
@@ -508,11 +594,24 @@ export function CommandCenterLayout() {
         onClose={() => setEmergencySOSModalOpen(false)}
       />
 
+      {/* Complete Nagpur Emergency Directory Modal */}
+      <EmergencyDirectoryModal
+        isOpen={directoryModalOpen}
+        onClose={() => setDirectoryModalOpen(false)}
+        onSelectServiceOnMap={(service) => {
+          setSelectedService(service);
+          setSelectedZoneId(null);
+        }}
+      />
+
       {/* Safe Route Modal */}
       <SafeRouteModal
         isOpen={safeRouteModalOpen}
         onClose={() => setSafeRouteModalOpen(false)}
         userLocation={userLocation}
+        onActiveRouteChange={setActiveRoute}
+        onAlternativesChange={setAlternativeRoutes}
+        onDisruptionsChange={setRouteDisruptions}
       />
 
       {/* Explainable AI Drawer */}
@@ -536,6 +635,21 @@ export function CommandCenterLayout() {
         isOpen={reportModalOpen}
         onClose={() => setReportModalOpen(false)}
         onSubmit={submitCitizenReport}
+      />
+
+      {/* AI Safety Assistant Launcher & Modal Panel */}
+      <AssistantLauncher
+        isOpen={assistantOpen}
+        onToggle={() => setAssistantOpen(true)}
+      />
+
+      <SafetyAssistant
+        isOpen={assistantOpen}
+        onClose={() => setAssistantOpen(false)}
+        userLocation={userLocation}
+        onUpdateUserLocation={setUserLocation}
+        onSelectPlaceOnMap={handleSelectAssistantPlace}
+        onOpenSOSModal={() => setEmergencySOSModalOpen(true)}
       />
     </div>
   );

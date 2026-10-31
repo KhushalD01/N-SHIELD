@@ -1,0 +1,74 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="utf-8">
+  <title>USAI - Project Documentation</title>
+  <style>
+    body { font-family: Calibri, sans-serif; font-size: 11pt; line-height: 1.5; color: #1a1a1a; }
+    h1 { font-size: 22pt; color: #0056b3; border-bottom: 2pt solid #0056b3; margin-bottom: 12pt; }
+    h2 { font-size: 16pt; color: #28a745; margin-top: 18pt; border-bottom: 1pt solid #ddd; }
+    h3 { font-size: 13pt; color: #17a2b8; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10pt; margin-bottom: 10pt; }
+    th { background-color: #0056b3; color: #ffffff; padding: 6pt; border: 1pt solid #ccc; text-align: left; }
+    td { padding: 6pt; border: 1pt solid #ccc; font-size: 10pt; }
+    code, pre { font-family: Consolas, monospace; background-color: #f4f4f4; padding: 4pt; border: 1pt solid #ddd; }
+  </style>
+</head>
+<body>
+  <h1>USAI - AI-Powered Urban Safety Intelligence & Command Center (Nagpur)</h1>
+  <p><strong>Complete Operational & Technical Specification Document</strong></p>
+
+  <h2>1. Executive Summary & Vision</h2>
+  <p>USAI (Urban Safety AI) is an integrated 3D Command Center and safety intelligence platform built specifically for Nagpur City, India. It combines spatial risk heatmaps, CCTV blind spot detection, AI police force deployment, public event impact forecasting, explainable AI (XAI), and emergency citizen SOS into a unified platform.</p>
+
+  <h2>2. Technology Stack</h2>
+  <ul>
+    <li><strong>Frontend:</strong> Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4</li>
+    <li><strong>Mapping & 3D Twin:</strong> Google Maps JS API, Mapbox GL JS (3D Buildings), Deck.gl</li>
+    <li><strong>Visualizations:</strong> Recharts & Framer Motion</li>
+    <li><strong>Audio Intelligence:</strong> Web Audio API Alarm Sound System</li>
+  </ul>
+
+  <h2>3. Administrative Sectors (Nagpur City)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Sector Code</th>
+        <th>Sector Name</th>
+        <th>Coordinates</th>
+        <th>Radius</th>
+        <th>Officer in Charge</th>
+        <th>Population</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Z-SIT</td><td>Sitabuldi</td><td>21.1458° N, 79.0882° E</td><td>2.5 km</td><td>Insp. Rajesh Sharma</td><td>120,000</td></tr>
+      <tr><td>Z-DHA</td><td>Dharampeth</td><td>21.1412° N, 79.0610° E</td><td>3.0 km</td><td>Insp. Anita Deshmukh</td><td>180,000</td></tr>
+      <tr><td>Z-SAD</td><td>Sadar</td><td>21.1610° N, 79.0815° E</td><td>2.8 km</td><td>Insp. Amit Varma</td><td>140,000</td></tr>
+      <tr><td>Z-ITW</td><td>Itwari</td><td>21.1520° N, 79.1120° E</td><td>2.2 km</td><td>Insp. Vijay Patil</td><td>210,000</td></tr>
+      <tr><td>Z-SAK</td><td>Sakkardara</td><td>21.1210° N, 79.1050° E</td><td>3.2 km</td><td>Insp. Sunita Kulkarni</td><td>195,000</td></tr>
+      <tr><td>Z-AUT</td><td>Automotive Sq</td><td>21.1920° N, 79.0910° E</td><td>4.0 km</td><td>Insp. Manoj Shinde</td><td>110,000</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. Key Mathematical Formulas & Core Logic</h2>
+  <p><strong>Zone Risk Score Formula:</strong></p>
+  <code>RiskScore = min(100, Round((IncidentLoad * 0.38 + TimeFactor * 0.27 + CCTVDeficit * 0.22 + LightingDeficit * 0.13) * 100))</code>
+  <br/><br/>
+  <p><strong>Police Allocation Formula:</strong></p>
+  <code>RequiredPatrols = max(2, Round((Population / 50000) + (RiskScore / 15) + (CrimeVelocity / 20)))</code>
+
+  <h2>5. REST API Architecture</h2>
+  <ul>
+    <li><code>GET /api/incidents</code> - Query incidents filtered by zone, severity, status</li>
+    <li><code>GET /api/cctv</code> - Surveillance network status and coverage ratios</li>
+    <li><code>GET /api/zones</code> - Sector spatial metadata and officer details</li>
+    <li><code>GET /api/news</code> - Real-time Nagpur crime and safety news feed</li>
+  </ul>
+
+  <h2>6. Quick Start & Execution</h2>
+  <pre>
+npm install
+npm run dev
+  </pre>
+</body>
+</html>

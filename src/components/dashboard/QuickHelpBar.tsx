@@ -10,11 +10,15 @@ import type { ServiceCategory } from "@/lib/nearbyServicesData";
 interface QuickHelpBarProps {
   onQuickCategoryClick: (category: ServiceCategory) => void;
   onCallEmergency112: () => void;
+  onOpenDirectory?: () => void;
+  onOpenSafeRoute?: () => void;
 }
 
 export function QuickHelpBar({
   onQuickCategoryClick,
   onCallEmergency112,
+  onOpenDirectory,
+  onOpenSafeRoute,
 }: QuickHelpBarProps) {
   const quickItems: {
     category: ServiceCategory;
@@ -102,6 +106,28 @@ export function QuickHelpBar({
             </div>
           </button>
         ))}
+
+        {onOpenDirectory && (
+          <button
+            type="button"
+            onClick={onOpenDirectory}
+            className="col-span-2 sm:col-auto flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 px-3 py-2 text-xs font-bold text-indigo-700 dark:text-indigo-300 shadow-2xs hover:bg-indigo-100 dark:hover:bg-indigo-900/60 active:scale-95 transition shrink-0"
+            title="Open Complete Nagpur Emergency Directory & PDF Dossier"
+          >
+            <span>📋 Emergency Directory</span>
+          </button>
+        )}
+
+        {onOpenSafeRoute && (
+          <button
+            type="button"
+            onClick={onOpenSafeRoute}
+            className="col-span-2 sm:col-auto flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 shadow-2xs hover:bg-emerald-100 dark:hover:bg-emerald-900/60 active:scale-95 transition shrink-0"
+            title="Open Dynamic Safe Route Reconstruction Planner"
+          >
+            <span>🗺️ Safe Route</span>
+          </button>
+        )}
 
         {/* Desktop-only 112 Speed Dial button */}
         <button

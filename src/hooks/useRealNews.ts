@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type {
+  AreaRisk,
   CitizenSubmittedReport,
   NewsApiResponse,
   NewsCategory,
@@ -12,26 +13,31 @@ const DEFAULT_CATEGORY_COUNTS: Record<NewsCategory, number> = {
   "All Updates": 0,
   "All Crimes": 0,
   Theft: 0,
-  Robbery: 0,
-  Assault: 0,
-  Burglary: 0,
   "Vehicle Theft": 0,
-  Accident: 0,
-  Fire: 0,
+  Robbery: 0,
+  Burglary: 0,
+  Assault: 0,
+  Murder: 0,
+  Kidnapping: 0,
+  "Crimes Against Women": 0,
+  Cybercrime: 0,
+  Fraud: 0,
+  "Drugs and Smuggling": 0,
   "Missing Person": 0,
-  Other: 0,
+  "Other Crime": 0,
 };
 
 export function useRealNews() {
   const [articles, setArticles] = useState<RealNewsArticle[]>([]);
   const [allArticles, setAllArticles] = useState<RealNewsArticle[]>([]);
+  const [areaRisks, setAreaRisks] = useState<AreaRisk[]>([]);
   const [categoryCounts, setCategoryCounts] = useState<Record<NewsCategory, number>>(DEFAULT_CATEGORY_COUNTS);
   const [citizenReports, setCitizenReports] = useState<CitizenSubmittedReport[]>([
     {
       id: "cit-rep-01",
-      title: "Broken Streetlight & Low Visibility Near Variety Square Alley",
-      description: "Streetlights have been non-functional for 3 days along the back lane, creating poor visibility after 8 PM.",
-      category: "Other",
+      title: "Suspicious Activity Reported Near Variety Square Alley",
+      description: "Unidentified individuals spotted attempting door handles along the back lane late night.",
+      category: "Other Crime",
       locationName: "Sitabuldi",
       lat: 21.1472,
       lng: 79.0838,
@@ -41,9 +47,9 @@ export function useRealNews() {
     },
     {
       id: "cit-rep-02",
-      title: "Pothole Hazard Causing Two-Wheeler Skids on Wardha Road Flyover Descent",
-      description: "Severe asphalt patch near the flyover descent has caused multiple near-miss motorcycle slips.",
-      category: "Accident",
+      title: "Attempted Two-Wheeler Theft on Wardha Road Flyover Descent",
+      description: "Parked motorcycle ignition lock tampered with near Wardha Road flyover descent.",
+      category: "Vehicle Theft",
       locationName: "Wardha Road",
       lat: 21.1065,
       lng: 79.0722,
@@ -83,9 +89,11 @@ export function useRealNews() {
           setError(data.error);
           setArticles([]);
           setAllArticles([]);
+          setAreaRisks([]);
         } else {
           setArticles(data.articles || []);
           setAllArticles(data.allArticles || data.articles || []);
+          setAreaRisks(data.areaRisks || []);
           if (data.categoryCounts) {
             setCategoryCounts(data.categoryCounts);
           }
@@ -101,7 +109,7 @@ export function useRealNews() {
           })
         );
       } catch (err: any) {
-        setError(err.message || "Unable to retrieve news reports.");
+        setError("Live safety news is temporarily unavailable. Please try again later.");
         setArticles([]);
       } finally {
         setLoading(false);
@@ -129,6 +137,7 @@ export function useRealNews() {
   return {
     articles,
     allArticles,
+    areaRisks,
     categoryCounts,
     citizenReports,
     loading,

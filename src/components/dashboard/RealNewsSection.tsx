@@ -32,34 +32,41 @@ import type {
 } from "@/lib/newsTypes";
 
 const CATEGORIES: NewsCategory[] = [
-  "All Updates",
   "All Crimes",
   "Theft",
-  "Robbery",
-  "Assault",
-  "Burglary",
   "Vehicle Theft",
-  "Accident",
-  "Fire",
+  "Robbery",
+  "Burglary",
+  "Assault",
+  "Murder",
+  "Kidnapping",
+  "Crimes Against Women",
+  "Cybercrime",
+  "Fraud",
+  "Drugs and Smuggling",
   "Missing Person",
-  "Other",
+  "Other Crime",
 ];
 
 const CATEGORY_BADGES: Record<
   NewsCategory,
   { label: string; icon: string; bg: string; text: string; border: string }
 > = {
-  "All Updates": { label: "All Updates", icon: "📰", bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-800 dark:text-slate-200", border: "border-slate-300 dark:border-slate-700" },
+  "All Updates": { label: "All Crimes", icon: "🛡️", bg: "bg-rose-50 dark:bg-rose-950/60", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-800" },
   "All Crimes": { label: "All Crimes", icon: "🛡️", bg: "bg-rose-50 dark:bg-rose-950/60", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-800" },
   Theft: { label: "Theft", icon: "🔴", bg: "bg-rose-50 dark:bg-rose-950/60", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-800" },
-  Robbery: { label: "Robbery", icon: "🔴", bg: "bg-rose-100 dark:bg-rose-950", text: "text-rose-800 dark:text-rose-200", border: "border-rose-300 dark:border-rose-700" },
-  Assault: { label: "Assault", icon: "🔴", bg: "bg-red-50 dark:bg-red-950/60", text: "text-red-700 dark:text-red-300", border: "border-red-200 dark:border-red-800" },
-  Burglary: { label: "Burglary", icon: "🔴", bg: "bg-rose-50 dark:bg-rose-950/60", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-800" },
   "Vehicle Theft": { label: "Vehicle Theft", icon: "🔴", bg: "bg-rose-50 dark:bg-rose-950/60", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-800" },
-  Accident: { label: "Accident", icon: "🚨", bg: "bg-amber-50 dark:bg-amber-950/60", text: "text-amber-700 dark:text-amber-300", border: "border-amber-200 dark:border-amber-800" },
-  Fire: { label: "Fire", icon: "🔥", bg: "bg-orange-50 dark:bg-orange-950/60", text: "text-orange-700 dark:text-orange-300", border: "border-orange-200 dark:border-orange-800" },
-  "Missing Person": { label: "Missing Person", icon: "👤", bg: "bg-purple-50 dark:bg-purple-950/60", text: "text-purple-700 dark:text-purple-300", border: "border-purple-200 dark:border-purple-800" },
-  Other: { label: "Other", icon: "ℹ️", bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300", border: "border-slate-200 dark:border-slate-700" },
+  Robbery: { label: "Robbery", icon: "🔴", bg: "bg-rose-100 dark:bg-rose-950", text: "text-rose-800 dark:text-rose-200", border: "border-rose-300 dark:border-rose-700" },
+  Burglary: { label: "Burglary", icon: "🔴", bg: "bg-rose-50 dark:bg-rose-950/60", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-800" },
+  Assault: { label: "Assault", icon: "🔴", bg: "bg-red-50 dark:bg-red-950/60", text: "text-red-700 dark:text-red-300", border: "border-red-200 dark:border-red-800" },
+  Murder: { label: "Murder", icon: "🚨", bg: "bg-red-100 dark:bg-red-950", text: "text-red-800 dark:text-red-200", border: "border-red-300 dark:border-red-700" },
+  Kidnapping: { label: "Kidnapping", icon: "⚠️", bg: "bg-amber-50 dark:bg-amber-950/60", text: "text-amber-700 dark:text-amber-300", border: "border-amber-200 dark:border-amber-800" },
+  "Crimes Against Women": { label: "Crimes Against Women", icon: "🛡️", bg: "bg-rose-100 dark:bg-rose-950/80", text: "text-rose-900 dark:text-rose-200", border: "border-rose-300 dark:border-rose-700" },
+  Cybercrime: { label: "Cybercrime", icon: "💻", bg: "bg-blue-50 dark:bg-blue-950/60", text: "text-blue-700 dark:text-blue-300", border: "border-blue-200 dark:border-blue-800" },
+  Fraud: { label: "Fraud", icon: "💳", bg: "bg-indigo-50 dark:bg-indigo-950/60", text: "text-indigo-700 dark:text-indigo-300", border: "border-indigo-200 dark:border-indigo-800" },
+  "Drugs and Smuggling": { label: "Drugs & Smuggling", icon: "🚫", bg: "bg-purple-50 dark:bg-purple-950/60", text: "text-purple-700 dark:text-purple-300", border: "border-purple-200 dark:border-purple-800" },
+  "Missing Person": { label: "Missing Person", icon: "👤", bg: "bg-amber-50 dark:bg-amber-950/60", text: "text-amber-700 dark:text-amber-300", border: "border-amber-200 dark:border-amber-800" },
+  "Other Crime": { label: "Other Crime", icon: "🚨", bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300", border: "border-slate-200 dark:border-slate-700" },
 };
 
 interface RealNewsSectionProps {
@@ -104,28 +111,7 @@ export function RealNewsSection({
       : citizenReports.filter((r) => r.category === selectedCategory);
 
   const getEmptyCategoryMessage = (category: NewsCategory) => {
-    switch (category) {
-      case "Theft":
-        return "No recent theft-related news found for Nagpur.";
-      case "Robbery":
-        return "No recent robbery-related news found for Nagpur.";
-      case "Assault":
-        return "No recent assault-related news found for Nagpur.";
-      case "Burglary":
-        return "No recent burglary-related news found for Nagpur.";
-      case "Vehicle Theft":
-        return "No recent vehicle theft-related news found for Nagpur.";
-      case "Accident":
-        return "No recent accident-related incidents found for Nagpur.";
-      case "Fire":
-        return "No recent fire-related incidents found for Nagpur.";
-      case "Missing Person":
-        return "No active missing person reports found for Nagpur.";
-      case "All Crimes":
-        return "No recent crime-specific incidents found for Nagpur right now.";
-      default:
-        return "No recent reports found in this category for Nagpur.";
-    }
+    return "No recent Nagpur crime news was found for the selected period.";
   };
 
   return (
@@ -142,17 +128,17 @@ export function RealNewsSection({
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-50 tracking-tight">
-                Latest Incidents & News
+                Nagpur Crime News
               </h2>
               <p className="text-xs text-slate-500 font-medium">
-                Verified category-filtered news & citizen reports
+                Recent crime-related reports collected from external news sources.
               </p>
             </div>
           </div>
         </div>
 
         {/* Tab Switcher: News Reports vs. Citizen Reports */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <div className="flex rounded-2xl bg-slate-100 dark:bg-slate-800 p-1 text-xs font-bold border border-slate-200/70 dark:border-slate-700/70">
             <button
               type="button"
@@ -214,9 +200,9 @@ export function RealNewsSection({
       {/* 2. CATEGORY FILTERS WITH DYNAMIC COUNTS                               */}
       {/* --------------------------------------------------------------------- */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 min-w-0 w-full">
           {/* Category Filter Tabs with dynamic numbers */}
-          <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full min-w-0 flex-1 no-scrollbar">
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat;
               const meta = CATEGORY_BADGES[cat];
@@ -252,7 +238,7 @@ export function RealNewsSection({
           </div>
 
           {/* Sort & Timestamp */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 shrink-0">
+          <div className="flex items-center justify-between sm:justify-end gap-2 text-xs font-semibold text-slate-500 shrink-0 w-full sm:w-auto">
             <select
               value={sortBy}
               onChange={(e) => onSelectSortBy(e.target.value as any)}
@@ -341,7 +327,7 @@ export function RealNewsSection({
             /* Category-Filtered Real News Cards Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {articles.map((article) => {
-                const badge = CATEGORY_BADGES[article.category] || CATEGORY_BADGES.Other;
+                const badge = CATEGORY_BADGES[article.category] || CATEGORY_BADGES["Other Crime"];
                 return (
                   <article
                     key={article.id}

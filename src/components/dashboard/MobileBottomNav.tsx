@@ -29,7 +29,7 @@ export function MobileBottomNav({
   onOpenEmergencySOS,
 }: MobileBottomNavProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 block md:hidden border-t border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl safe-area-pb">
+    <div className="fixed inset-x-0 bottom-0 z-40 block lg:hidden border-t border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl safe-area-pb">
       <nav className="flex items-center justify-around px-2 py-1.5">
         
         {/* 1. Home */}

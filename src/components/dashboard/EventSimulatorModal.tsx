@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CalendarRange, Loader2, MapPin, Users, X } from "lucide-react";
 import type { PublicEventSimulation } from "@/lib/eventImpactEngine";
@@ -41,6 +41,15 @@ export function EventSimulatorModal({
     setResult(null);
     onClose();
   };
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && phase !== "loading") resetAndClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, phase, resetAndClose]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
