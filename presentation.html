@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N-SHIELD: AI-Driven Urban Safety Intelligence Model — Presentation</title>
+  <style>
+    :root {
+      --bg: #090e1a;
+      --card-bg: rgba(18, 28, 51, 0.85);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+      --rose: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .slide-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .slide {
+      position: absolute;
+      width: 90vw;
+      max-width: 1200px;
+      height: 80vh;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      padding: 48px;
+      display: none;
+      flex-direction: column;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    .slide.active { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .kicker {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+    .slide-content {
+      flex: 1;
+      display: grid;
+      gap: 20px;
+      overflow-y: auto;
+    }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .card {
+      background: rgba(11, 19, 38, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 12px;
+    }
+    .card-title.red { color: var(--rose); }
+    .card-title.green { color: var(--emerald); }
+    ul { list-style: none; }
+    li {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    li::before {
+      content: "•";
+      color: var(--cyan);
+      font-weight: bold;
+    }
+    .speaker-notes-drawer {
+      margin-top: 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border-left: 3px solid var(--cyan);
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .nav-bar {
+      height: 64px;
+      background: rgba(11, 19, 38, 0.95);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+    }
+    .nav-btn {
+      background: #1e293b;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: var(--cyan); color: #000; }
+    .counter { color: var(--text-muted); font-size: 14px; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="slide-container">
+    <!-- SLIDE 1 -->
+    <div class="slide active">
+      <div class="kicker">N-SHIELD // URBAN SAFETY INTELLIGENCE</div>
+      <div class="slide-title" style="font-size: 46px; color: var(--cyan); margin-bottom: 8px;">N-SHIELD</div>
+      <div style="font-size: 24px; font-weight: 600; color: #fff; margin-bottom: 24px;">AI-Driven Urban Safety Intelligence Model</div>
+      <div class="slide-content">
+        <div class="card" style="border-color: rgba(6, 182, 212, 0.4);">
+          <div class="card-title">Project Overview & Objectives</div>
+          <ul>
+            <li><strong>Location:</strong> Nagpur Metropolitan Area, Maharashtra, India</li>
+            <li><strong>Core Missions:</strong> Real-Time Crime Analytics, Dynamic Safe Routing, 100+ Verified Hospital Emergency Directory, and One-Tap Emergency Circle Telemetry</li>
+            <li><strong>Technology:</strong> Next.js 16 (Turbopack) • Google Maps JavaScript API • Google Gemini 2.5 Flash • Serverless Edge Architecture</li>
+            <li><strong>Target Audience:</strong> Night-shift workers, women commuters, students, first responders & municipal authorities</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "Good day respected jury and evaluators. Today we present N-SHIELD, an AI-driven urban safety intelligence model designed for Nagpur, Maharashtra. It transforms static crime statistics into proactive real-time safety advisories and rapid emergency dispatch."
+      </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide">
+      <div class="kicker">PROBLEM STATEMENT</div>
+      <div class="slide-title">Urban Safety Bottlenecks in Nagpur</div>
+      <div class="slide-content grid-3">
+        <div class="card">
+          <div class="card-title red">1. Reactive Crime Records</div>
+          <ul>
+            <li>Traditional policing relies on post-incident FIR logs.</li>
+            <li>Citizens lack foresight when entering unfamiliar corridors at night.</li>
+            <li>High-risk areas (Outer Ring Rd, Kalamna) lack live warnings.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Golden Hour Delays</div>
+          <ul>
+            <li>Trauma and cardiac patients face crucial delays.</li>
+            <li>Outdated online map pins point to closed clinics or road centers.</li>
+            <li>No distinction between 24/7 Casualty vs OPD clinics.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title green">3. Distress Disconnect</div>
+          <ul>
+            <li>Distressed users cannot make lengthy phone calls.</li>
+            <li>Guardians forced to install heavy proprietary apps.</li>
+            <li>No streaming telemetry of battery %, speed, or heading.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "At 11 PM, traditional navigation apps route commuters down unlit service lanes to save 2 minutes. When emergencies occur, hospital listings are often outdated, and distress alerts lack live telemetry."
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide">
+      <div class="kicker">SYSTEM ARCHITECTURE</div>
+      <div class="slide-title">Multi-Tier Edge & Intelligence Pipeline</div>
+      <div class="slide-content grid-3">
+        <div class="card">
+          <div class="card-title">1. Client Layer</div>
+          <ul>
+            <li>Next.js 16 App Router & React 19</li>
+            <li>Google Maps Platform with custom heatmaps & SVGs</li>
+            <li>Responsive Tailwind CSS command center</li>
+            <li>Continuous Web Geolocation watchPosition stream</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">2. Serverless Edge APIs</div>
+          <ul>
+            <li><strong>/api/safety:</strong> 750m corridor risk evaluation</li>
+            <li><strong>/api/places:</strong> Geocoded hospital & police search</li>
+            <li><strong>/api/emergency-circle:</strong> Live telemetry sessions</li>
+            <li><strong>/api/assistant:</strong> Gemini 2.5 Flash RAG pipeline</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">3. Data & AI Engine</div>
+          <ul>
+            <li>100+ verified Nagpur healthcare facilities</li>
+            <li>Smart City CCTV camera coordinates & FOV cones</li>
+            <li>Multi-factor Risk Scoring equation</li>
+            <li>TinyFish live news search grounding</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "Our architecture combines a responsive React 19 client with high-speed serverless microservices on Vercel, feeding into our Nagpur geospatial database and Gemini AI."
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide">
+      <div class="kicker">ALGORITHMIC MODELING</div>
+      <div class="slide-title">Multi-Factor Dynamic Risk Scoring</div>
+      <div class="slide-content grid-2">
+        <div class="card">
+          <div class="card-title">The Mathematical Formulation</div>
+          <ul>
+            <li><strong>Formula:</strong> Risk = [w₁·Crime + w₂·(1-Lighting) + w₃·Time + w₄·(1-CCTV)] × 100</li>
+            <li><strong>Historical Crime (w₁ = 0.35):</strong> Density of past FIR records.</li>
+            <li><strong>Street Illumination (w₂ = 0.25):</strong> Municipal lighting coverage.</li>
+            <li><strong>Night Multiplier (w₃ = 0.25):</strong> Escalates 22:00–04:00 IST.</li>
+            <li><strong>Surveillance Coverage (w₄ = 0.15):</strong> Distance to nearest CCTV/PCR van.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title green">Explainable AI (XAI) Output</div>
+          <ul>
+            <li>Transparent factor breakdown for every city polygon.</li>
+            <li>Citizens see exact percentages for Lighting, Crime, and CCTV.</li>
+            <li>Actionable travel advisories (e.g., 'Prefer WHC Road over internal lanes after 10 PM').</li>
+            <li>Calibrated across Sitabuldi, Dharampeth, Mahal, and Sadar.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "N-SHIELD's algorithm recalculates risk dynamically based on the hour of the day and illumination levels. Furthermore, every score is completely explainable to the user."
+      </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="slide">
+      <div class="kicker">SAFE ROUTING</div>
+      <div class="slide-title">Dynamic Incident Re-Routing Engine</div>
+      <div class="slide-content grid-2">
+        <div class="card">
+          <div class="card-title">Shortest vs. Safest Path</div>
+          <ul>
+            <li><strong>The Problem:</strong> Shortest route algorithms cut through dark alleys and isolated industrial stretches.</li>
+            <li><strong>The N-SHIELD Solution:</strong> Scans a 750m buffer envelope around candidate paths.</li>
+            <li>Prioritizes well-lit, police-patrolled arterial avenues.</li>
+            <li>Visual color-coding: Green (Safe), Yellow (Caution), Red (High Risk).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Real-Time Incident Interception</div>
+          <ul>
+            <li>Monitors live road disruptions, protests, and waterlogging.</li>
+            <li>Automatically reconstructs alternate paths bypassing incidents.</li>
+            <li>Provides turn-by-turn safety rationale directly to commuter.</li>
+            <li>One-tap export to Google Maps Navigation.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "Our safe routing engine evaluates candidate paths using a 750-meter safety envelope, avoiding dark spots and dynamically recalculating around disruptions."
+      </div>
+    </div>
+
+    <!-- SLIDE 6 -->
+    <div class="slide">
+      <div class="kicker">HEALTHCARE LOCATOR</div>
+      <div class="slide-title">Verified Nagpur Hospital Directory</div>
+      <div class="slide-content grid-3">
+        <div class="card">
+          <div class="card-title">100+ Audited Facilities</div>
+          <ul>
+            <li>GMCH (Medical Square) & Mayo Hospital</li>
+            <li>AIIMS Nagpur (MIHAN SEZ)</li>
+            <li>Kingsway, Alexis / Max, Wockhardt</li>
+            <li>National Cancer Institute & Sengupta Maternity</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title green">Casualty Gate Precision</div>
+          <ul>
+            <li>Hand-audited physical entrance coordinates.</li>
+            <li>Zero pin overlap or road-center clustering.</li>
+            <li>Straight-line and realistic road distance calculation.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Instant Emergency Triage</div>
+          <ul>
+            <li>1-Tap filter for 24/7 Verified Casualty Units.</li>
+            <li>Government vs Private filters.</li>
+            <li>Pediatric, Cardiac, Maternity, & 24/7 Medicals.</li>
+            <li>Direct phone dialer and turn-by-turn routing.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "Every hospital pin in N-SHIELD points to the physical casualty entrance. Commuters can filter for 24/7 emergency casualty, cardiac, or maternity care in one tap."
+      </div>
+    </div>
+
+    <!-- SLIDE 7 -->
+    <div class="slide">
+      <div class="kicker">EMERGENCY TELEMETRY</div>
+      <div class="slide-title">Emergency Circle & One-Tap Live Sharing</div>
+      <div class="slide-content grid-2">
+        <div class="card">
+          <div class="card-title red">One-Tap SOS Broadcast</div>
+          <ul>
+            <li>Pre-configure parents, siblings, and trusted guardians.</li>
+            <li>Single tap sends emergency SMS/WhatsApp with live tracking link.</li>
+            <li>Instantly connects to Central Police (112) or Ambulance (108).</li>
+            <li>Begins high-frequency GPS coordinate broadcast.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Zero-Install Recipient View</div>
+          <ul>
+            <li>Guardians DO NOT need to install an app or create an account.</li>
+            <li>Streams live moving marker, speed, heading, and battery %.</li>
+            <li>Pulsing audio-visual distress beacon.</li>
+            <li>Ephemeral 32-byte cryptographic tokens with auto-expiry.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "The Emergency Circle sends an encrypted live tracking link to family. Guardians can track the commuter's movement, speed, and phone battery percentage without installing any app."
+      </div>
+    </div>
+
+    <!-- SLIDE 8 -->
+    <div class="slide">
+      <div class="kicker">AI ASSISTANT</div>
+      <div class="slide-title">AI Safety Assistant (RAG with Gemini)</div>
+      <div class="slide-content grid-2">
+        <div class="card">
+          <div class="card-title">Context-Grounded Intelligence</div>
+          <ul>
+            <li>Powered by Google Gemini 2.5 Flash for rapid inference (<800ms).</li>
+            <li>Retrieval-Augmented Generation (RAG) with local Nagpur crime & hospital data.</li>
+            <li>TinyFish search grounding for breaking local news and disruptions.</li>
+            <li>Strict guardrails: mandatory 112/108/1091 emergency helpline disclaimers.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title green">Natural Language Queries</div>
+          <ul>
+            <li>"Is Sitabuldi safe for solo women after 11 PM?"</li>
+            <li>"Where is the closest 24/7 pediatric hospital from Dharampeth?"</li>
+            <li>"Suggest a well-lit route from VNIT to Airport."</li>
+            <li>Accurate, grounded answers without hallucinated phone numbers.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "Our AI Assistant uses Gemini 2.5 Flash grounded in authentic municipal records, answering citizen safety questions accurately and safely."
+      </div>
+    </div>
+
+    <!-- SLIDE 9 -->
+    <div class="slide">
+      <div class="kicker">CONCLUSION & ROADMAP</div>
+      <div class="slide-title">Impact, Future Roadmap & Thank You</div>
+      <div class="slide-content grid-2">
+        <div class="card">
+          <div class="card-title">Future Scope (N-SHIELD 2.0)</div>
+          <ul>
+            <li>Direct integration with Nagpur Smart City ICCC console.</li>
+            <li>Acoustic distress detection (screams & collision triggers).</li>
+            <li>Crowdsourced citizen reporting of broken streetlights.</li>
+            <li>Replication across Pune, Mumbai, and Tier-2 urban hubs.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Live Links & Repository</div>
+          <ul>
+            <li><strong>GitHub:</strong> https://github.com/KhushalD01/N-SHIELD</li>
+            <li><strong>Live Deployment:</strong> Next.js 16 on Vercel Serverless</li>
+            <li><strong>Thank You!</strong> Open for Jury Q&A and Live Demo.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speaker-notes-drawer">
+        <strong>Speaker Script:</strong> "N-SHIELD shifts urban safety from reactive panic to predictive intelligence. Thank you very much, and we now welcome questions from the jury!"
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+    <div class="counter" id="slideCounter">Slide 1 of 9</div>
+    <button class="nav-btn" onclick="nextSlide()">Next →</button>
+  </div>
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+
+    function showSlide(index) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === index));
+      counter.textContent = `Slide ${index + 1} of ${slides.length}`;
+    }
+
+    function nextSlide() {
+      if (current < slides.length - 1) { current++; showSlide(current); }
+    }
+    function prevSlide() {
+      if (current > 0) { current--; showSlide(current); }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>
