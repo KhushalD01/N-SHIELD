@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifySessionToken } from "@/lib/auth/token";
 import { findUserById, sanitizeUser } from "@/lib/auth/userStore";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const sessionCookie = req.cookies.get("nshield_session")?.value;

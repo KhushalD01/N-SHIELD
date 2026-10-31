@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cctvCameras, getMockMeta } from "@/lib/mockData";
 import type { CCTVResponse } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 

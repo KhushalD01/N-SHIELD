@@ -7,6 +7,7 @@
 
 import fs from "fs";
 import path from "path";
+import os from "os";
 import crypto from "crypto";
 import type {
   ContactRelationship,
@@ -17,81 +18,77 @@ import type {
 } from "./types";
 import { sendEmergencyAlert, sendOtpSms } from "./smsService";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+// Pre-seeded verified evaluation contacts so Emergency Circle works out-of-the-box on Vercel
+const DEFAULT_CONTACTS: TrustedContact[] = [
+  {
+    id: "ct_demo_parent",
+    userId: "usr-citizen-01",
+    name: "Dr. Suresh Deshmukh",
+    countryCode: "+91",
+    phoneNumber: "9822345678",
+    normalizedPhone: "+919822345678",
+    relationship: "Family",
+    verificationStatus: "verified",
+    createdAt: "2026-10-29T00:42:10.079Z",
+    updatedAt: "2026-10-29T00:42:10.079Z",
+  },
+  {
+    id: "ct_demo_sibling",
+    userId: "usr-citizen-01",
+    name: "Pooja Deshmukh",
+    countryCode: "+91",
+    phoneNumber: "9422890123",
+    normalizedPhone: "+919422890123",
+    relationship: "Family",
+    verificationStatus: "verified",
+    createdAt: "2026-10-29T00:42:10.079Z",
+    updatedAt: "2026-10-29T00:42:10.079Z",
+  },
+  {
+    id: "ct_demo_friend",
+    userId: "usr-citizen-01",
+    name: "Amit Verma",
+    countryCode: "+91",
+    phoneNumber: "9765432109",
+    normalizedPhone: "+919765432109",
+    relationship: "Friend",
+    verificationStatus: "pending",
+    createdAt: "2026-10-29T00:42:10.079Z",
+    updatedAt: "2026-10-29T00:42:10.079Z",
+  },
+];
+
+const DATA_DIR = process.env.VERCEL
+  ? path.join(os.tmpdir(), "nshield-data")
+  : path.join(process.cwd(), "data");
 const CONTACTS_FILE = path.join(DATA_DIR, "trusted_contacts.json");
 const SESSIONS_FILE = path.join(DATA_DIR, "emergency_sessions.json");
 
-// In-memory caches for fast concurrent lookups
-let cachedContacts: TrustedContact[] | null = null;
-let cachedSessions: EmergencySharingSession[] | null = null;
+// In-memory caches for fast concurrent lookups: pre-populated with default contacts
+let cachedContacts: TrustedContact[] = [...DEFAULT_CONTACTS];
+let cachedSessions: EmergencySharingSession[] = [];
 let isInitialized = false;
 
 function ensureDataFiles() {
-  if (isInitialized && cachedContacts && cachedSessions) return;
+  if (isInitialized) return;
 
   try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-
-    if (!fs.existsSync(CONTACTS_FILE)) {
-      // Initialize with sample demo contacts for default evaluation accounts
-      const defaultContacts: TrustedContact[] = [
-        {
-          id: "ct_demo_parent",
-          userId: "usr-citizen-01",
-          name: "Dr. Suresh Deshmukh",
-          countryCode: "+91",
-          phoneNumber: "9822345678",
-          normalizedPhone: "+919822345678",
-          relationship: "Family",
-          verificationStatus: "verified",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "ct_demo_sibling",
-          userId: "usr-citizen-01",
-          name: "Pooja Deshmukh",
-          countryCode: "+91",
-          phoneNumber: "9422890123",
-          normalizedPhone: "+919422890123",
-          relationship: "Family",
-          verificationStatus: "verified",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "ct_demo_friend",
-          userId: "usr-citizen-01",
-          name: "Amit Verma",
-          countryCode: "+91",
-          phoneNumber: "9765432109",
-          normalizedPhone: "+919765432109",
-          relationship: "Friend",
-          verificationStatus: "pending",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ];
-      fs.writeFileSync(CONTACTS_FILE, JSON.stringify(defaultContacts, null, 2), "utf8");
-      cachedContacts = defaultContacts;
-    } else {
+    const projectContactsFile = path.join(process.cwd(), "data", "trusted_contacts.json");
+    if (fs.existsSync(projectContactsFile)) {
+      const raw = fs.readFileSync(projectContactsFile, "utf8");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        cachedContacts = parsed;
+      }
+    } else if (fs.existsSync(CONTACTS_FILE)) {
       const raw = fs.readFileSync(CONTACTS_FILE, "utf8");
-      cachedContacts = JSON.parse(raw);
-    }
-
-    if (!fs.existsSync(SESSIONS_FILE)) {
-      fs.writeFileSync(SESSIONS_FILE, JSON.stringify([], null, 2), "utf8");
-      cachedSessions = [];
-    } else {
-      const raw = fs.readFileSync(SESSIONS_FILE, "utf8");
-      cachedSessions = JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        cachedContacts = parsed;
+      }
     }
   } catch (err) {
-    console.error("Failed to initialize emergency circle data files:", err);
-    if (!cachedContacts) cachedContacts = [];
-    if (!cachedSessions) cachedSessions = [];
+    console.warn("Notice: Using in-memory trusted contacts (filesystem read-only or not initialized):", err);
   }
 
   isInitialized = true;
@@ -99,19 +96,23 @@ function ensureDataFiles() {
 
 function persistContacts() {
   try {
-    ensureDataFiles();
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(CONTACTS_FILE, JSON.stringify(cachedContacts, null, 2), "utf8");
   } catch (err) {
-    console.error("Failed to write trusted contacts to disk:", err);
+    console.warn("Contacts storage persistence notice: operating in in-memory mode.");
   }
 }
 
 function persistSessions() {
   try {
-    ensureDataFiles();
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify(cachedSessions, null, 2), "utf8");
   } catch (err) {
-    console.error("Failed to write emergency sessions to disk:", err);
+    console.warn("Sessions storage persistence notice: operating in in-memory mode.");
   }
 }
 
@@ -236,7 +237,7 @@ export async function deleteContact(userId: string, contactId: string): Promise<
   ensureDataFiles();
   const initialLength = (cachedContacts || []).length;
   cachedContacts = (cachedContacts || []).filter((c) => !(c.id === contactId && c.userId === userId));
-  
+
   if (cachedContacts.length !== initialLength) {
     persistContacts();
     return true;

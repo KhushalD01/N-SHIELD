@@ -5,6 +5,8 @@ import {
   startEmergencySession,
 } from "@/lib/emergency-circle/circleStore";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const user = await getSessionUser(req);

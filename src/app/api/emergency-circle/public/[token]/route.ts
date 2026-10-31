@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionByToken } from "@/lib/emergency-circle/circleStore";
 import type { PublicSharedLocationView } from "@/lib/emergency-circle/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ token: string }> }

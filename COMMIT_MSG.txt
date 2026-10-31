@@ -1,0 +1,6 @@
+fix(vercel): resolve serverless read-only filesystem and middleware api routing
+
+- Whitelist all /api/ routes unconditionally in middleware to prevent HTML redirect on JSON fetch
+- Switch userStore and circleStore to os.tmpdir() in Vercel serverless environment
+- Pre-populate in-memory seed users and emergency contacts to prevent EROFS read-only crashes
+- Add dynamic = 'force-dynamic' to serverless API routes

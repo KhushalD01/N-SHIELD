@@ -11,6 +11,8 @@ import {
 } from "@/lib/newsService";
 import type { NewsApiResponse, NewsCategory, RealNewsArticle } from "@/lib/newsTypes";
 
+export const dynamic = "force-dynamic";
+
 const STRICT_NAGPUR_CRIME_QUERY =
   '("Nagpur" OR "Nagpur city") AND (crime OR criminal OR police OR arrested OR arrest OR theft OR stolen OR robbery OR robbed OR burglary OR assault OR attacked OR murder OR killed OR kidnapping OR kidnapped OR rape OR molestation OR harassment OR "chain snatching" OR fraud OR scam OR cybercrime OR smuggling OR drugs OR narcotics OR weapon OR firing OR stabbing OR missing)';
 

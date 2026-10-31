@@ -7,6 +7,8 @@ import type {
   Severity,
 } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 const VALID_SEVERITIES: Severity[] = ["low", "medium", "high", "critical"];
 const VALID_TYPES: CrimeType[] = ["Murder", "Chain-snatching", "Robbery"];
 const VALID_STATUSES: IncidentStatus[] = ["open", "investigating", "resolved"];

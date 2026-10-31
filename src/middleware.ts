@@ -18,23 +18,19 @@ export async function middleware(request: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon.ico") ||
-    pathname.match(/\.(png|jpg|jpeg|svg|gif|webp|ico|css|js|map|txt)$/)
+    pathname.match(/\.(png|jpg|jpeg|svg|gif|webp|ico|css|js|map|txt|pdf|csv|json)$/)
   ) {
     return NextResponse.next();
   }
 
-  // 2. Allow Public & Emergency APIs and Recipient Live-Share Viewer
-  // (In accordance with Requirement 7: Do not gate life-saving emergency data behind a login)
-  if (
-    pathname.startsWith("/live-share") ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/api/emergency") ||
-    pathname.startsWith("/api/places") ||
-    pathname.startsWith("/api/news") ||
-    pathname.startsWith("/api/cctv") ||
-    pathname.startsWith("/api/safety") ||
-    pathname.startsWith("/api/zones")
-  ) {
+  // 2. Always allow all API endpoints to handle requests directly without HTML redirection
+  // (APIs return JSON status codes like 401/400/500 rather than breaking client fetch with HTML redirects)
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
+  // 3. Allow Public Pages: Dashboard (/), Live Share Recipient (/live-share/*), Auth pages
+  if (pathname === "/" || pathname.startsWith("/live-share")) {
     return NextResponse.next();
   }
 
