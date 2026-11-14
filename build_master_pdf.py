@@ -1,0 +1,902 @@
+import os
+import subprocess
+import sys
+
+def build_pdf():
+    edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+    if not os.path.exists(edge_path):
+        print(f"Error: Edge not found at {edge_path}")
+        return False
+
+    html_file = os.path.abspath("n_shield_master_pdf_source.html")
+    pdf_file = os.path.abspath("N_SHIELD_Complete_Project_Documentation.pdf")
+
+    html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>N-SHIELD: AI-Driven Urban Safety Intelligence Model - Complete Project Documentation</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 14mm 12mm;
+    @bottom-right {
+      content: "Page " counter(page);
+      font-size: 8pt;
+      color: #64748b;
+      font-family: 'Segoe UI', sans-serif;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: #0f172a;
+    background-color: #ffffff;
+    line-height: 1.5;
+    font-size: 9.5pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Cover Page */
+  .cover {
+    height: 100vh;
+    min-height: 250mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24mm 16mm;
+    background: linear-gradient(135deg, #090e1a 0%, #0f172a 60%, #1e293b 100%);
+    color: #ffffff;
+    border-radius: 8px;
+    page-break-after: always;
+  }
+
+  .cover-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(6, 182, 212, 0.15);
+    border: 1px solid #06b6d4;
+    border-radius: 20px;
+    color: #38bdf8;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .cover-title {
+    font-size: 38pt;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: #06b6d4;
+    margin: 0 0 6px 0;
+  }
+
+  .cover-subtitle {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 16px 0;
+    line-height: 1.25;
+  }
+
+  .cover-desc {
+    font-size: 11pt;
+    color: #cbd5e1;
+    max-width: 90%;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .cover-card {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 10px;
+  }
+
+  .cover-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .cover-meta-item {
+    font-size: 9pt;
+    color: #94a3b8;
+  }
+  .cover-meta-item strong {
+    color: #f1f5f9;
+  }
+
+  .cover-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 14px;
+    font-size: 8.5pt;
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Document Typography */
+  h1 {
+    font-size: 18pt;
+    font-weight: 800;
+    color: #0f172a;
+    border-bottom: 2px solid #06b6d4;
+    padding-bottom: 4px;
+    margin: 22pt 0 10pt 0;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #0e7490;
+    margin: 16pt 0 8pt 0;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 12pt 0 6pt 0;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin: 0 0 7pt 0;
+    text-align: justify;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10pt 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    padding: 6pt 8pt;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+
+  th {
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  /* Visual Callouts and Badges */
+  .alert-box {
+    padding: 10pt 12pt;
+    border-radius: 6px;
+    margin: 10pt 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  .alert-info {
+    background-color: #ecfeff;
+    border-left: 4px solid #06b6d4;
+    color: #083344;
+  }
+
+  .alert-warning {
+    background-color: #fff1f2;
+    border-left: 4px solid #f43f5e;
+    color: #4c0519;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-success { background-color: #dcfce7; color: #166534; }
+  .badge-danger { background-color: #fee2e2; color: #991b1b; }
+  .badge-primary { background-color: #e0f2fe; color: #075985; }
+
+  /* Diagram Box */
+  .diagram-container {
+    background: #090e1a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 12pt 0;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .diagram-caption {
+    font-size: 8pt;
+    color: #94a3b8;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* Two Column Cards */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12pt;
+    margin: 10pt 0;
+    page-break-inside: avoid;
+  }
+
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10pt 12pt;
+  }
+
+  .card-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 6pt;
+  }
+
+  ul {
+    margin: 0 0 8pt 16pt;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 4pt;
+  }
+
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    background-color: #f1f5f9;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #0e7490;
+  }
+
+  .formula-box {
+    background-color: #090e1a;
+    color: #38bdf8;
+    padding: 8pt 12pt;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
+    font-size: 9pt;
+    margin: 8pt 0;
+    border-left: 3px solid #06b6d4;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div>
+    <div class="cover-badge">Smart City Urban Safety Intelligence Platform</div>
+    <div class="cover-title">N-SHIELD</div>
+    <div class="cover-subtitle">AI-Driven Urban Safety Intelligence Model</div>
+    <div class="cover-desc">
+      A comprehensive geospatial safety command twin designed and deployed for Nagpur, Maharashtra. Integrates multi-factor predictive crime risk analytics, 750m corridor safe routing, 100+ verified hospital directory with entrance precision, CCTV blind-spot discovery, and one-tap live telemetry streaming.
+    </div>
+
+    <div class="cover-card">
+      <div style="font-size: 11pt; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">Executive Technical Specification & System Blueprint</div>
+      <div class="cover-grid">
+        <div class="cover-meta-item"><strong>Primary Location:</strong> Nagpur, Maharashtra, India</div>
+        <div class="cover-meta-item"><strong>Framework Stack:</strong> Next.js 16 (Turbopack) & React 19</div>
+        <div class="cover-meta-item"><strong>GIS & Mapping:</strong> Google Maps Platform (Maps JS API)</div>
+        <div class="cover-meta-item"><strong>AI/ML Engine:</strong> Google Gemini 2.5 Flash RAG Engine</div>
+        <div class="cover-meta-item"><strong>Architecture:</strong> Vercel Edge Serverless & Ephemeral Store</div>
+        <div class="cover-meta-item"><strong>Repository:</strong> KhushalD01/N-SHIELD (GitHub)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div>Target Audience: Smart City Authorities &bull; Police Command &bull; Evaluators &bull; Citizens</div>
+    <div>Date: November 2026 &bull; Production Release v2.4</div>
+  </div>
+</div>
+
+<!-- SECTION 1: EXECUTIVE SUMMARY -->
+<h1>1. Executive Summary & Project Introduction</h1>
+<p>
+  <strong>N-SHIELD (Nagpur Safety, Hazard Intelligence & Emergency Location Director)</strong> represents a paradigm shift from reactive law enforcement to predictive, preventative urban safety intelligence. Engineered as a full-stack digital twin for Nagpur City, Maharashtra, the platform unifies heterogeneous municipal data—including 30-day rolling FIR crime records, ambient street illumination sensor indices, Smart City CCTV camera field-of-view cones, verified hospital emergency casualty gates, and live commuter telemetry—into an actionable, sub-second decision-support ecosystem.
+</p>
+
+<h2>1.1 Urban Safety Bottlenecks in Nagpur</h2>
+<p>
+  As Nagpur experiences exponential urban growth across outward corridors such as Wardha Road (MIHAN SEZ), Outer Ring Road, Kalamna, Pardi, and Besa-Beltarodi, safety infrastructure exhibits critical structural disparities:
+</p>
+<ul>
+  <li><strong>Street Lighting Asymmetry:</strong> While core commercial avenues (West High Court Road, Central Avenue) possess modern LED lighting, transit connectors and residential interior roads experience severe illumination deficits (dropping below 20% after 22:00 IST).</li>
+  <li><strong>Surveillance Blind Spots:</strong> Central intersections are densely monitored by municipal cameras, but high-traffic industrial and transit fringes (e.g., Kalamna freight market, Outer Ring Road bypasses) suffer from surveillance dead-zones where crime vulnerability escalates.</li>
+  <li><strong>The Emergency Golden-Hour Dilemma:</strong> In road collisions, acute trauma, and cardiac events, family members and first responders frequently waste 15 to 25 critical minutes navigating to closed clinics or inaccurate map pins that point to the middle of roads rather than physical 24/7 casualty gates.</li>
+</ul>
+
+<h2>1.2 Why Existing Applications Are Insufficient</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Standard Consumer GPS (Google/Apple)</th>
+      <th>Commercial SOS Apps</th>
+      <th>N-SHIELD Intelligence Model</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Routing Logic</strong></td>
+      <td>Minimizes travel time/distance only ($T_{min}$).</td>
+      <td>No routing capabilities.</td>
+      <td><strong>Safety-Weighted Corridors:</strong> Evaluates 750m envelope for lighting, CCTV, and crime.</td>
+    </tr>
+    <tr>
+      <td><strong>Crime Awareness</strong></td>
+      <td>Completely agnostic of crime history.</td>
+      <td>Subjective user ratings.</td>
+      <td><strong>Dynamic 0–100 Risk Engine:</strong> Calibrated across 16 contiguous Nagpur sectors.</td>
+    </tr>
+    <tr>
+      <td><strong>CCTV Integration</strong></td>
+      <td>None.</td>
+      <td>None.</td>
+      <td><strong>Automated Blind-Spot Discovery:</strong> Highlights unmonitored high-risk corridors.</td>
+    </tr>
+    <tr>
+      <td><strong>Healthcare Triage</strong></td>
+      <td>Crowdsourced pins; often closed OPDs.</td>
+      <td>Static basic numbers (100, 102).</td>
+      <td><strong>100+ Hand-Audited Facilities:</strong> Physical casualty gates with 24/7 filters.</td>
+    </tr>
+    <tr>
+      <td><strong>Distress Telemetry</strong></td>
+      <td>Requires proprietary app installation.</td>
+      <td>Single static SMS coordinate.</td>
+      <td><strong>Zero-Install Live Stream:</strong> Moving GPS, speed, heading, and battery %.</td>
+    </tr>
+    <tr>
+      <td><strong>Conversational AI</strong></td>
+      <td>Generic voice prompts.</td>
+      <td>Rule-based static chatbots.</td>
+      <td><strong>Grounded Local RAG (Gemini 2.5 Flash):</strong> Verified municipal data integration.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- SECTION 2: SYSTEM ARCHITECTURE -->
+<h1>2. End-to-End System Architecture (6 Layers)</h1>
+<p>
+  N-SHIELD is architected as an enterprise-grade digital twin built on Next.js 16 (Turbopack), React 19, Google Maps JavaScript API, and Google Gemini 2.5 Flash. The system is partitioned into six discrete architectural tiers:
+</p>
+
+<!-- SVG Architecture Diagram -->
+<div class="diagram-container">
+  <svg width="680" height="300" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="680" height="300" rx="8" fill="#090e1a" stroke="#1e293b" stroke-width="1"/>
+    
+    <!-- Layer 1 -->
+    <rect x="20" y="20" width="640" height="38" rx="6" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="340" y="44" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', sans-serif">1. CLIENT PRESENTATION LAYER (React 19 • Google Maps JS • Tailwind Glassmorphism • Web Geolocation)</text>
+
+    <!-- Arrow down -->
+    <line x1="340" y1="58" x2="340" y2="72" stroke="#06b6d4" stroke-width="2"/>
+    <polygon points="340,75 336,69 344,69" fill="#06b6d4"/>
+
+    <!-- Layer 2 -->
+    <rect x="20" y="75" width="640" height="38" rx="6" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="340" y="99" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', sans-serif">2. EDGE MIDDLEWARE & ROUTING TIER (Next.js Edge Middleware • JWT Authentication • /api/* Whitelist)</text>
+
+    <!-- Arrow down -->
+    <line x1="340" y1="113" x2="340" y2="127" stroke="#06b6d4" stroke-width="2"/>
+    <polygon points="340,130 336,124 344,124" fill="#06b6d4"/>
+
+    <!-- Layer 3 -->
+    <rect x="20" y="130" width="640" height="42" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+    <text x="340" y="148" fill="#34d399" font-size="11" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', sans-serif">3. AI & SPATIAL INTELLIGENCE CORE</text>
+    <text x="340" y="163" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="'Segoe UI', sans-serif">Risk Scoring Engine • 750m Corridor Evaluator • CCTV Blind-Spot Detector • Gemini 2.5 Flash RAG</text>
+
+    <!-- Arrow down -->
+    <line x1="340" y1="172" x2="340" y2="186" stroke="#10b981" stroke-width="2"/>
+    <polygon points="340,189 336,183 344,183" fill="#10b981"/>
+
+    <!-- Layer 4 & 5 Grid -->
+    <rect x="20" y="189" width="310" height="42" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="175" y="207" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', sans-serif">4. NAGPUR GIS CORE</text>
+    <text x="175" y="222" fill="#cbd5e1" font-size="8.5" text-anchor="middle" font-family="'Segoe UI', sans-serif">16 Sector Polygons • 100+ Hospitals • CCTV FOVs</text>
+
+    <rect x="350" y="189" width="310" height="42" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="505" y="207" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', sans-serif">5. RESILIENT STORAGE TIER</text>
+    <text x="505" y="222" fill="#cbd5e1" font-size="8.5" text-anchor="middle" font-family="'Segoe UI', sans-serif">os.tmpdir() Fallback • In-Memory Seed Store • Ephemeral</text>
+
+    <!-- Arrow down -->
+    <line x1="340" y1="231" x2="340" y2="245" stroke="#f59e0b" stroke-width="2"/>
+    <polygon points="340,248 336,242 344,242" fill="#f59e0b"/>
+
+    <!-- Layer 6 -->
+    <rect x="20" y="248" width="640" height="38" rx="6" fill="#0f172a" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="340" y="272" fill="#f87171" font-size="11" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', sans-serif">6. EXTERNAL SERVICES (Google Maps Platform • Google Gemini API • TinyFish Web Search • Police 112 CAD)</text>
+  </svg>
+  <div class="diagram-caption">Figure 2.1: N-SHIELD 6-Tier Modular System Architecture</div>
+</div>
+
+<h2>2.1 Tier Breakdown & Operational Logic</h2>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Client Presentation Tier</div>
+    <p>Engineered using React 19 and Next.js 16 with Turbopack. Features a responsive command center layout, interactive vector mapping via `@vis.gl/react-google-maps`, high-precision W3C geolocation tracking, and a glassmorphism midnight aesthetic (`#090e1a`) with cyan accents.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Edge Routing & Middleware Tier</div>
+    <p>Next.js Edge Middleware intercepts inbound traffic to enforce JWT authentication on protected administrative routes while unconditionally passing through `/api/*` endpoints to prevent HTML redirection on client JSON fetches.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">AI & Spatial Intelligence Core</div>
+    <p>Houses the core mathematical risk engine, safe corridor evaluation algorithms, automated blind-spot detectors, and the Retrieval-Augmented Generation (RAG) assistant pipeline powered by Google Gemini 2.5 Flash.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Geospatial Information & State Tier</div>
+    <p>Maintains 16 contiguous Nagpur municipal sector boundaries, 100+ hand-verified hospital casualty coordinates, Smart City camera locations, and ephemeral session stores using resilient `/tmp` file writes for serverless stability.</p>
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SECTION 3: KEY FEATURE DEEP DIVES -->
+<h1>3. Detailed Feature Breakdown & Mathematical Formulations</h1>
+
+<h2>3.1 Feature A: AI-Based Crime Risk Prediction Engine</h2>
+<p>
+  Crime risk is modeled as a spatiotemporal continuum that fluctuates based on human mobility, lighting, natural surveillance, and police presence. N-SHIELD evaluates sector risk using a <strong>Multi-Factor Stochastic Formulation</strong>:
+</p>
+
+<div class="formula-box">
+  Risk Score R_z(t) = min(100, Round([ w1·L_incident + w2·F_time(t) + w3·D_cctv + w4·D_lighting(t) ] × 100))
+</div>
+
+<p><strong>Parameter Specifications:</strong></p>
+<ul>
+  <li><code>L_incident</code> (Incident Load, w1 = 0.38): Evaluates rolling 30-day FIR records: <code>min(1.0, N_recent·0.08 + N_high·0.12 + I_severity·0.35)</code>, with severity weights: Critical = 1.0, High = 0.78, Medium = 0.50, Low = 0.25.</li>
+  <li><code>F_time(t)</code> (Time Multiplier, w2 = 0.27): Non-linear escalation peaking between 22:00 and 04:00 IST (Daylight: 0.18, Dusk: 0.45, Peak Night: 0.72–1.00, Late Night: 0.62).</li>
+  <li><code>D_cctv</code> (Surveillance Deficit, w3 = 0.22): <code>(100 - CCTV Coverage %) / 100</code>.</li>
+  <li><code>D_lighting(t)</code> (Illumination Deficit, w4 = 0.13): Derived from municipal streetlight cycles, dropping from 95% at noon to 8–22% past midnight.</li>
+</ul>
+
+<!-- Risk Engine Visual SVG -->
+<div class="diagram-container">
+  <svg width="650" height="150" viewBox="0 0 650 150" xmlns="http://www.w3.org/2000/svg">
+    <rect width="650" height="150" rx="6" fill="#090e1a"/>
+    <!-- Inputs -->
+    <rect x="20" y="20" width="130" height="24" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="85" y="36" fill="#f8fafc" font-size="8.5" text-anchor="middle">FIR Crime Records (0.38)</text>
+
+    <rect x="20" y="50" width="130" height="24" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="85" y="66" fill="#f8fafc" font-size="8.5" text-anchor="middle">Time Multiplier (0.27)</text>
+
+    <rect x="20" y="80" width="130" height="24" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="85" y="96" fill="#f8fafc" font-size="8.5" text-anchor="middle">CCTV Deficit (0.22)</text>
+
+    <rect x="20" y="110" width="130" height="24" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="85" y="126" fill="#f8fafc" font-size="8.5" text-anchor="middle">Lighting Deficit (0.13)</text>
+
+    <!-- Connectors -->
+    <line x1="150" y1="72" x2="230" y2="72" stroke="#06b6d4" stroke-width="2"/>
+    <polygon points="230,72 224,68 224,76" fill="#06b6d4"/>
+
+    <!-- Risk Math Engine -->
+    <rect x="230" y="35" width="170" height="75" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+    <text x="315" y="65" fill="#34d399" font-size="10" font-weight="bold" text-anchor="middle">Dynamic Risk Engine</text>
+    <text x="315" y="82" fill="#94a3b8" font-size="8" text-anchor="middle">Stochastic Normalizer (0-100)</text>
+
+    <!-- Connectors -->
+    <line x1="400" y1="72" x2="470" y2="72" stroke="#10b981" stroke-width="2"/>
+    <polygon points="470,72 464,68 464,76" fill="#10b981"/>
+
+    <!-- Outputs -->
+    <rect x="470" y="20" width="160" height="30" rx="4" fill="#052e16" stroke="#22c55e"/>
+    <text x="550" y="38" fill="#4ade80" font-size="9" font-weight="bold" text-anchor="middle">Low Risk (0-39) &bull; Standard</text>
+
+    <rect x="470" y="60" width="160" height="30" rx="4" fill="#451a03" stroke="#f59e0b"/>
+    <text x="550" y="78" fill="#fcd34d" font-size="9" font-weight="bold" text-anchor="middle">Medium Risk (40-69) &bull; Caution</text>
+
+    <rect x="470" y="100" width="160" height="30" rx="4" fill="#450a0a" stroke="#ef4444"/>
+    <text x="550" y="118" fill="#fca5a5" font-size="9" font-weight="bold" text-anchor="middle">High Risk (70-100) &bull; Reroute</text>
+  </svg>
+  <div class="diagram-caption">Figure 3.1: Mathematical Risk Engine Workflow and Classification</div>
+</div>
+
+<h2>3.2 Feature B: Interactive Heatmap & Contiguous Municipal Polygons</h2>
+<p>
+  Instead of imprecise circular radius overlays that create gaps and overlapping artifacts, N-SHIELD implements a <strong>16-sector planar contiguous polygon mosaic</strong> (`src/lib/nagpurPolygons.ts`). Every sector boundary shares canonical junction vertices with its neighbors, guaranteeing zero unintentional gaps and zero visual overlap across Mankapur, Kamptee Road, Sadar, Dharampeth, Sitabuldi, Mahal, Medical Square, Wardha Road, and Kalamna.
+</p>
+
+<h2>3.3 Feature C: Safe Route Recommendation (750m Corridor Analysis)</h2>
+<p>
+  Traditional navigation engines optimize travel strictly for shortest travel time, routing lone commuters down unlit service lanes or isolated alleys. N-SHIELD evaluates candidate paths using a <strong>750-meter safety envelope</strong>:
+</p>
+<ul>
+  <li><strong>Corridor Scanning:</strong> Evaluates street lighting percentages, active CCTV camera visibility, and recent incident clusters within 750 meters of the candidate polyline.</li>
+  <li><strong>Dynamic Incident Re-Routing:</strong> If a recent disruption (protest, unlit stretch, snatching incident) is detected along the primary route, the engine recalculates an alternative corridor along illuminated, police-patrolled arterial avenues (e.g., West High Court Road).</li>
+  <li><strong>Explainable Safety Advice:</strong> Supplies transparent justification: <em>"Rerouted via WHC Road (+350m, +2 mins). Avoids unlit canal stretch with 4 recent evening snatching logs. Recommended route has 92% illumination and active PCR patrol presence."</em></li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>3.4 Feature D: CCTV Intelligence & Automated Blind-Spot Discovery</h2>
+<p>
+  A municipal coordinate is classified as an <strong>Urgent Surveillance Blind Spot</strong> when:
+</p>
+<div class="formula-box">
+  Blind Spot Condition = [ RiskScore(x, y, t) >= 75 ]  AND  [ Operational_CCTV_Density(x, y) < 45% ]
+</div>
+<p>
+  The system calculates camera field-of-view (FOV) cones across major squares (Variety Square, Zero Mile, RBI Chowk, Rahate Colony). Where high historical incidents intersect with surveillance dead-zones, the dashboard projects pulsing crimson warning rings, enabling police commanders to deploy stationary PCR vans to close surveillance voids during peak night hours.
+</p>
+
+<!-- SVG Safe Route & Blind Spot Diagram -->
+<div class="diagram-container">
+  <svg width="650" height="170" viewBox="0 0 650 170" xmlns="http://www.w3.org/2000/svg">
+    <rect width="650" height="170" rx="6" fill="#090e1a"/>
+    
+    <!-- Origin and Dest -->
+    <circle cx="60" cy="85" r="12" fill="#06b6d4"/>
+    <text x="60" y="89" fill="#000" font-size="9" font-weight="bold" text-anchor="middle">A</text>
+    <text x="60" y="112" fill="#38bdf8" font-size="8" text-anchor="middle">Sitabuldi</text>
+
+    <circle cx="590" cy="85" r="12" fill="#10b981"/>
+    <text x="590" y="89" fill="#000" font-size="9" font-weight="bold" text-anchor="middle">B</text>
+    <text x="590" y="112" fill="#34d399" font-size="8" text-anchor="middle">VNIT Campus</text>
+
+    <!-- Route 1: Shortest (Red) -->
+    <path d="M 72 80 Q 200 20, 320 30 T 578 80" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4"/>
+    <text x="320" y="20" fill="#f87171" font-size="8.5" font-weight="bold" text-anchor="middle">Shortest Path (3.2km, 8m) &bull; Canal Rd &bull; Dark (18% Light) &bull; HIGH RISK</text>
+
+    <!-- Blind spot warning icon on route 1 -->
+    <circle cx="320" cy="30" r="14" fill="none" stroke="#ef4444" stroke-width="2"/>
+    <text x="320" y="34" fill="#ef4444" font-size="9" font-weight="bold" text-anchor="middle">!</text>
+
+    <!-- Route 2: Safest (Green) -->
+    <path d="M 72 90 Q 220 150, 330 145 T 578 90" fill="none" stroke="#10b981" stroke-width="4"/>
+    <text x="330" y="165" fill="#4ade80" font-size="8.5" font-weight="bold" text-anchor="middle">Safest Path (3.6km, 11m) &bull; WHC Road &bull; Bright (92% Light) &bull; RECOMMENDED</text>
+
+    <!-- CCTV Camera Icons along Route 2 -->
+    <rect x="220" y="125" width="8" height="8" fill="#38bdf8"/>
+    <rect x="330" y="130" width="8" height="8" fill="#38bdf8"/>
+    <rect x="440" y="120" width="8" height="8" fill="#38bdf8"/>
+  </svg>
+  <div class="diagram-caption">Figure 3.2: 750m Corridor Analysis — Comparing Shortest (High Risk) vs. Safest (Illuminated) Route</div>
+</div>
+
+<h2>3.5 Feature E: Nagpur Emergency Medical Directory (100+ Facilities)</h2>
+<p>
+  N-SHIELD maintains a hand-audited directory of <strong>over 100 verified healthcare institutions</strong> across Nagpur (`src/lib/hospitalDirectoryData.ts`). Every record is audited down to the physical emergency casualty gate coordinates, eliminating road-center clustering:
+</p>
+<ul>
+  <li><strong>Government Apex Centers:</strong> GMCH Medical Square (1,400 beds, Level-1 Trauma), IGGMCH Mayo Hospital (Central Avenue), AIIMS Nagpur (MIHAN SEZ).</li>
+  <li><strong>Premier Multispecialty Care:</strong> Kingsway Hospital, Alexis/Max Super Speciality (Mankapur), Wockhardt Super Speciality (Shankar Nagar), Orange City Hospital.</li>
+  <li><strong>Instant Triage Filters:</strong> 24/7 Verified Emergency Casualty, Government facilities, Cardiac Cath Labs, Pediatric ICUs, Maternity trauma care, and 24/7 Pharmacies with 1-tap phone dialing.</li>
+</ul>
+
+<h2>3.6 Feature F: Emergency Circle & Live Telemetry Streamer</h2>
+<p>
+  Most SOS applications fail because they send a single static SMS coordinate, and force recipients to install heavy proprietary apps. N-SHIELD solves this through <strong>Zero-Install Ephemeral Live Sharing</strong>:
+</p>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">1-Tap Distress Trigger</div>
+    <p>Tapping SOS instantly creates an encrypted 32-byte session token, dispatches SMS/WhatsApp alerts with a secure web link, triggers the 112 police dialer, and begins streaming GPS coordinates every 3 to 5 seconds.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Zero-Install Recipient View</div>
+    <p>Guardians open <code>/live-share/[token]</code> on any mobile browser without an account. Streams real-time moving markers, travel velocity (km/h), compass heading, and device battery percentage with auto-expiry in 15–60 minutes.</p>
+  </div>
+</div>
+
+<h2>3.7 Features G–J: Night Safety, Events, News & AI Assistant</h2>
+<ul>
+  <li><strong>Night Safety Mode:</strong> Dark-adapted glassmorphism UI with Web Audio API synthesized alarm frequencies (880Hz alternating warning tones).</li>
+  <li><strong>Public Event Simulator:</strong> Mathematical crowd risk formula predicting safety spillovers for matches at VCA Stadium or rallies at Kasturchand Park.</li>
+  <li><strong>Live Crime Intelligence:</strong> Multi-filter keyword pipeline ingesting verified local police FIR news while discarding unverified rumors.</li>
+  <li><strong>AI Safety Assistant:</strong> Context-grounded Retrieval-Augmented Generation (RAG) using Google Gemini 2.5 Flash, delivering sub-800ms natural language safety advice with mandatory 112/108 helpline guardrails.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- SECTION 4: TECHNOLOGY STACK -->
+<h1>4. Production Technology Stack & Engineering Audit</h1>
+<p>
+  Every dependency documented below is actively implemented and verified against the repository's <code>package.json</code>:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Package / Library</th>
+      <th>Version</th>
+      <th>Role in Architecture & Technical Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Framework</strong></td>
+      <td><code>next</code></td>
+      <td>16.3.1</td>
+      <td>App Router framework with Turbopack bundler for sub-second serverless rendering and API routes.</td>
+    </tr>
+    <tr>
+      <td><strong>UI Library</strong></td>
+      <td><code>react</code> / <code>react-dom</code></td>
+      <td>19.2.8</td>
+      <td>Declarative client state management across vector map overlays, search drawers, and live telemetry modals.</td>
+    </tr>
+    <tr>
+      <td><strong>Language</strong></td>
+      <td><code>typescript</code></td>
+      <td>^5.0.0</td>
+      <td>Compile-time type safety across all geospatial coordinates, API contracts, and risk schemas.</td>
+    </tr>
+    <tr>
+      <td><strong>Styling</strong></td>
+      <td><code>tailwindcss</code></td>
+      <td>^4.0.0</td>
+      <td>Modern CSS engine rendering glassmorphism surfaces, midnight dark mode, and responsive layouts.</td>
+    </tr>
+    <tr>
+      <td><strong>Mapping Engine</strong></td>
+      <td><code>@vis.gl/react-google-maps</code></td>
+      <td>^1.9.0</td>
+      <td>Google Maps Platform wrapper managing vector tiles, SVG casualty pins, and turn-by-turn safe polylines.</td>
+    </tr>
+    <tr>
+      <td><strong>Generative AI</strong></td>
+      <td><code>@google/genai</code></td>
+      <td>^2.31.0</td>
+      <td>Official SDK connecting to <code>gemini-2.5-flash</code> for context-grounded natural language safety triage.</td>
+    </tr>
+    <tr>
+      <td><strong>Web Research</strong></td>
+      <td><code>TinyFish Client</code></td>
+      <td>Custom</td>
+      <td>Grounds AI assistant answers in breaking local traffic disruptions and municipal announcements.</td>
+    </tr>
+    <tr>
+      <td><strong>Data Viz</strong></td>
+      <td><code>recharts</code></td>
+      <td>^3.10.1</td>
+      <td>Renders risk score breakdown progress bars, temporal crime velocity curves, and surveillance distribution charts.</td>
+    </tr>
+    <tr>
+      <td><strong>Iconography</strong></td>
+      <td><code>lucide-react</code></td>
+      <td>^1.31.0</td>
+      <td>Provides high-clarity SVG icons for hospitals, police patrol units, CCTV cameras, sirens, and compass headings.</td>
+    </tr>
+    <tr>
+      <td><strong>Motion</strong></td>
+      <td><code>framer-motion</code></td>
+      <td>^13.1.0</td>
+      <td>Powers smooth navigation drawer slide-ins, modal transitions, and pulsing distress beacon rings.</td>
+    </tr>
+    <tr>
+      <td><strong>Storage / State</strong></td>
+      <td><code>os.tmpdir() & In-Memory</code></td>
+      <td>Native</td>
+      <td>Resilient serverless storage guaranteeing user auth and emergency circle sessions function without disk errors.</td>
+    </tr>
+    <tr>
+      <td><strong>Presentation</strong></td>
+      <td><code>python-pptx & Edge Headless</code></td>
+      <td>1.0.2</td>
+      <td>Automated script generating native PowerPoint decks (.pptx) and publication-quality documentation PDFs.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- SECTION 5: IMPLEMENTATION AUDIT & ROADMAP -->
+<h1>5. Implementation Status Audit & 5-Phase Smart City Roadmap</h1>
+
+<h2>5.1 Verified Codebase Status Audit</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Module / Feature</th>
+      <th>Status</th>
+      <th>Code Reference</th>
+      <th>Operational Capability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>16 Contiguous Sector Polygons</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/nagpurPolygons.ts</code></td>
+      <td>Contiguous planar mosaic with shared canonical vertices (zero gaps/overlaps).</td>
+    </tr>
+    <tr>
+      <td>Multi-Factor Risk Scoring Engine</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/riskEngine.ts</code></td>
+      <td>4-factor stochastic formula with time-of-day multipliers and lighting index.</td>
+    </tr>
+    <tr>
+      <td>100+ Verified Hospital Directory</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/hospitalDirectoryData.ts</code></td>
+      <td>Hand-audited casualty gates with 24/7 filters and 1-tap phone dialers.</td>
+    </tr>
+    <tr>
+      <td>750m Corridor Safe Route Engine</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/safety/evaluateRouteRisk.ts</code></td>
+      <td>Evaluates incident exposure, lighting %, and CCTV along candidate polylines.</td>
+    </tr>
+    <tr>
+      <td>CCTV Blind-Spot Detection</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/blindSpotIntelligence.ts</code></td>
+      <td>Highlights high crime risk (>75) intersecting with low CCTV coverage (<45%).</td>
+    </tr>
+    <tr>
+      <td>Emergency Circle & Live Telemetry</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/app/api/emergency-circle/*</code></td>
+      <td>One-tap SOS dispatching zero-install URLs with live battery, speed, and GPS.</td>
+    </tr>
+    <tr>
+      <td>AI Safety Assistant (Gemini RAG)</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/assistant/orchestrator.ts</code></td>
+      <td>Grounded RAG using Gemini 2.5 Flash and TinyFish live local news search.</td>
+    </tr>
+    <tr>
+      <td>Night Safety Mode & Audio Alarm</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/audioService.ts</code></td>
+      <td>Web Audio API synthesized warning alarm frequencies (880Hz alternating).</td>
+    </tr>
+    <tr>
+      <td>Public Event Crowd Simulator</td>
+      <td><span class="badge badge-success">Implemented</span></td>
+      <td><code>src/lib/eventImpactEngine.ts</code></td>
+      <td>Mathematical crowd risk formula for VCA Stadium and Kasturchand Park events.</td>
+    </tr>
+    <tr>
+      <td>Smart City ICCC Hardware Link</td>
+      <td><span class="badge badge-primary">Planned (Phase 4)</span></td>
+      <td>External API Target</td>
+      <td>Direct physical IoT sensor telemetry handshake from Nagpur Smart City servers.</td>
+    </tr>
+    <tr>
+      <td>Acoustic Scream & Collision Trigger</td>
+      <td><span class="badge badge-primary">Planned (Phase 4)</span></td>
+      <td>Mobile Native Target</td>
+      <td>On-device acoustic machine learning triggering SOS on sudden collision sounds.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5.2 5-Phase Smart City Deployment Roadmap</h2>
+<ul>
+  <li><strong>Phase 1: Core Intelligence (Completed):</strong> 16 sector polygon boundaries, multi-factor risk engine, 100+ hand-audited hospital records.</li>
+  <li><strong>Phase 2: RAG & Telemetry (Completed):</strong> Gemini 2.5 Flash assistant integration, Emergency Circle, and zero-install live-share URLs.</li>
+  <li><strong>Phase 3: Production & Edge (Completed):</strong> Next.js 16 Turbopack optimization, Vercel serverless resiliency, and rate-limiting safeguards.</li>
+  <li><strong>Phase 4: Smart City Integration (6–12 Months):</strong> Integration with Nagpur Smart City ICCC console, direct 112 CAD auto-dispatch, and acoustic distress triggers.</li>
+  <li><strong>Phase 5: Multi-City Expansion (12–24 Months):</strong> Expanding digital twins to Pune, Mumbai, and Nashik; offline mesh networking for non-cellular SOS fallback.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- SECTION 6: SECURITY, PRIVACY & IMPACT -->
+<h1>6. Security, Privacy & Societal Impact</h1>
+
+<h2>6.1 Location Privacy & Ephemeral Telemetry</h2>
+<p>
+  Citizen privacy is foundational to N-SHIELD. In strict accordance with digital privacy ethics, location telemetry is treated as ephemeral:
+</p>
+<ul>
+  <li><strong>Zero Persistent Movement History:</strong> The live-telemetry store records GPS coordinates exclusively during active emergency sessions. Once terminated by the user or upon reaching timeout (15–60 mins), coordinate history is permanently purged from server memory.</li>
+  <li><strong>Cryptographic 32-Byte Session Tokens:</strong> URLs utilize high-entropy cryptographic strings generated via <code>crypto.randomBytes(32)</code>, making URL guessing or enumeration computationally impossible.</li>
+  <li><strong>Secure Authentication & Rate Limiting:</strong> PBKDF2/SHA-256 password hashing with unique per-user salts, HttpOnly session cookies, and sliding-window rate limiting (30 requests/min per IP) preventing automated scraping and denial-of-service attacks.</li>
+</ul>
+
+<h2>6.2 Expected Societal Impact Across Stakeholders</h2>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Female Commuters & Night-Shift Workers</div>
+    <p>Eliminates transit panic by providing transparent visibility into well-lit corridors and active police presence. One-tap SOS provides dignified, silent emergency protection that alerts family without demanding voice calls.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">108 EMS & Trauma First Responders</div>
+    <p>Slashes response delays by ensuring ambulances navigate directly to physical 24/7 casualty gates rather than locked OPD complexes or generic road centroids at apex hospitals like GMCH and AIIMS.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Nagpur City Police Command (112)</div>
+    <p>Empowers police dispatchers with algorithmic patrol optimization, stationing PCR vans inside identified CCTV blind spots during peak vulnerability hours (22:00–04:00 IST).</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Nagpur Municipal Corporation (NMC)</div>
+    <p>Provides urban planners with data-backed justification for prioritizing municipal street lighting installations and smart surveillance camera node deployment along dark corridors.</p>
+  </div>
+</div>
+
+<div class="alert-box alert-warning">
+  <strong>Ethical AI & Predictive Disclaimer:</strong> Algorithmic risk scores generated by N-SHIELD are decision-support indicators based on historical crime reports, municipal lighting calculations, and surveillance density. They do not constitute an absolute guarantee of safety, nor do they predict with certainty that an offence will occur. Citizens must always maintain situational awareness, obey official law enforcement advisories, and contact emergency services (112 Police / 108 Ambulance) when facing imminent danger.
+</div>
+
+<h1>7. Project Deliverables & Companion Assets</h1>
+<p>All core deliverables for the N-SHIELD project are synchronized and available in the repository:</p>
+<ul>
+  <li><strong>Official GitHub Repository:</strong> <a href="https://github.com/KhushalD01/N-SHIELD">KhushalD01/N-SHIELD (main branch)</a></li>
+  <li><strong>Master Documentation PDF:</strong> <code>N_SHIELD_Complete_Project_Documentation.pdf</code> (This publication-quality document)</li>
+  <li><strong>Microsoft PowerPoint Presentation Deck:</strong> <code>N_SHIELD_Presentation.pptx</code> (13 Widescreen 16:9 slides with speaker scripts)</li>
+  <li><strong>Interactive Web Slide Presenter:</strong> <code>presentation.html</code> (Keyboard-controlled standalone slide deck)</li>
+  <li><strong>Interactive Web Documentation Viewer:</strong> <code>n_shield_master_documentation.html</code> (Self-contained browser documentation)</li>
+</ul>
+
+<div style="margin-top: 30pt; border-top: 1px solid #cbd5e1; padding-top: 10pt; font-size: 8pt; color: #64748b; text-align: center;">
+  N-SHIELD: AI-Driven Urban Safety Intelligence Model &bull; Nagpur, Maharashtra &bull; Complete Project Documentation &bull; Generated November 2026
+</div>
+
+</body>
+</html>
+"""
+
+    with open(html_file, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    print(f"Generated HTML source at {html_file}")
+
+    # Invoke Microsoft Edge in headless mode
+    html_url = "file:///" + html_file.replace("\\", "/")
+    cmd = [
+        edge_path,
+        "--headless",
+        "--no-pdf-header-footer",
+        f"--print-to-pdf={pdf_file}",
+        html_url
+    ]
+
+    print(f"Executing Microsoft Edge to compile PDF...")
+    res = subprocess.run(cmd, capture_output=True, text=True)
+
+    if os.path.exists(pdf_file) and os.path.getsize(pdf_file) > 1000:
+        size_kb = os.path.getsize(pdf_file) // 1024
+        print(f"SUCCESS: Generated {pdf_file} ({size_kb} KB)")
+        return True, pdf_file
+    else:
+        print("Failed to generate PDF.")
+        print("Stderr:", res.stderr)
+        return False, None
+
+if __name__ == "__main__":
+    success, path = build_pdf()
+    if not success:
+        sys.exit(1)
